@@ -1,0 +1,149 @@
+.verticalMenu{
+    min-height: 700px;
+}
+form{
+    margin-left: -40px;
+}
+.topicLabel{
+    width: 70%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+}
+
+/**
+*附件
+*/
+a.attachment{
+    font-size: 12px;
+    padding: 0 10px 0 30px;
+    line-height: 30px;
+    text-decoration: none;
+    display: block;
+    position: relative;
+    white-space: nowrap;
+    width: 40%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-left: 15%;
+
+}
+a.attachment:before{
+    content: "x";
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    font-size: 16px;
+    display: inline-block;
+    position: absolute;
+    border-radius: 10px;
+    top: 3px;
+    left: 15px;
+    color: #FF3399;
+    /*background: url(../../../images/app/delete.png) center center no-repeat #FF3399;*/
+}
+
+/*
+*作者信息
+*/
+.row .rowContent ul{
+    margin: 0px;
+}
+.authorInfo{
+    padding-bottom: 10px;
+    position: relative;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 25px;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+.authorInfo .authorNameDiv{
+    display: inline-block;
+    vertical-align: top;
+    width: 73%;
+}
+.authorInfo .authorNameDiv .txt{
+    width: 90%;
+}
+.authorInfo .authorNameDiv .deleteAuthor{
+    display: inline-block;
+    width: 100px;
+    height: 30px;
+    line-height: 30px;
+    position: absolute;
+    left:10px;
+    bottom:20px;
+    font-size: 14px;
+}
+.authorInfo .authorPhotoDiv{
+    width: 25%;
+    display: inline-block;
+}
+.authorInfo .squareImg{
+    width:80%;
+}
+.authorInfo .btn{
+    min-width: 80%;
+    font-size: 14px;
+    height: 30px;
+    line-height: 30px;
+    margin-top: 5px;
+}
+
+/*
+*文件列表
+*/
+.mediaList{
+    position: absolute;
+    width:160px;
+    background: url(../../../images/app/lineBg.png) repeat-y right;
+    min-height: 400px;
+}
+.mediaList li.active{
+    background: url(../../../images/app/rightArrow.png) no-repeat right;
+}
+.mediaList li a{
+    display: inline-block;
+    height: 100%;
+    width: 153px;
+}
+.mediaList li.active a{
+    color: #33cc99;
+}
+.mediaList li .name{
+    width: 80%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    font-size: 14px;
+    height: 20px;
+    line-height: 20px;
+}
+.mediaList li .delete{
+    font-size: 0px;
+    background: url(../../../images/app/deleteGray.png) no-repeat center center;
+    width: 16px;
+    height: 20px;
+    display: inline-block;
+    vertical-align: top;
+}
+.mediaInfoPanel{
+    margin-left: 150px;
+}
+.mediaInfoPanel .labelTxt{
+    text-align: center;
+}
+.mediaInfoPanel img{
+    width:60%;
+}
+.mediaInfoPanel .rowContent .txtarea{
+    width:85.7%;
+}
+
+
+.marginTopMore{
+    margin-top: 80px;
+}

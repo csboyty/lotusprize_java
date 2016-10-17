@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    #include("/baseUrl.html")
+    <!--<meta charset="utf-8">
+    <base id="baseUrl" href="http://localhost/lotusprizeWeb2014/">
+    <title>2014第四届“芙蓉杯”国际工业设计创新大赛</title>
+    <link rel="shortcut icon" href="images/app/favicon.png" mce_href="images/app/favicon.png" type="image/x-png">-->
+
+    <link href="css/lib/jquery.toastmessage.css" rel="stylesheet" type="text/css">
+    <link type="text/css" rel="stylesheet" href="css/src/common.css">
+    <script type="text/javascript" src="js/lib/jquery-1.7.1.min.js"></script>
+    <!--[if lte IE 9]>
+    <script src="js/lib/html5.js"></script>
+    <![endif]-->
+    <script type="text/javascript" src="js/lib/jquery.form.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.toastmessage.js"></script>
+    <script type="text/javascript" src="js/src/config.js"></script>
+    <script type="text/javascript" src="js/src/corpUser/resetPwd.js"></script>
+    <script>
+        var href="";
+    </script>
+</head>
+<body>
+
+#parse("/corpUser/corpUserHeader.html")
+
+<div class="content topicViewContent">
+    <!--<div>
+        <div class="row">
+            <input type="text" id="searchTitle" class="searchTxt txt" placeholder="搜索标题">
+            <span class="sortPanel">
+                <label>排序：</label>
+                <a href="#" class="DES active" data-order-by="jiangjin" id="orderByMoney">奖金额度</a>
+                &nbsp;|&nbsp;
+                <a href="#" class="DES init"  data-order-by="shuliang" id="orderByWorkCount">作品数量</a>
+            </span>
+        </div>
+
+        <div class="row">
+            <label>参赛类别：</label>
+            <a href="#" class="category" data-category="1">A1 数字化制造与设计创新</a>
+            &nbsp;|&nbsp;
+            <a href="#" class="category" data-category="2">A2 智能产品与服务设计创新</a>
+            &nbsp;|&nbsp;
+            <a href="#" class="category" data-category="3">B 社会化服务设计创新</a>
+        </div>
+    </div>-->
+
+    <ul class="itemList" id="topicList">
+        #foreach($topic in $topics)
+        <li class="item">
+            <a href="s/topicManager/topic/${topic.id}">
+                <img src="${topic.profile}" class="thumb">
+                <p class="infoRow">
+                    <span class="spanTxt">作品数：${topic.artifactAmount}</span>
+                    <span class="spanTxt money right">&yen;${topic.reward}</span>
+                </p>
+                <p  class="infoRow lastInfoRow">
+                    <span class="title spanTxt" title="${topic.name}">${topic.name}</span>
+                    <span class="spanTxt right">
+                        #if($topic.category=="1")
+                            A1
+                        #elseif($topic.category=="2")
+                            A2
+                        #elseif($topic.category=="3")
+                            B
+                        #end
+                    </span>
+                </p>
+
+            </a>
+        </li>
+        #end
+
+
+    </ul>
+</div>
+
+
+#include("/corpUser/resetPwd.html")
+
+#include("/footer.html")
+</body>
+</html>

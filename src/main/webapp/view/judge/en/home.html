@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    #include("/en/baseUrl.html")
+    <!--<meta charset="utf-8">
+    <base id="baseUrl" href="http://localhost/lotusprizeWeb2014/">
+    <title>2014第四届“芙蓉杯”国际工业设计创新大赛</title>
+    <link rel="shortcut icon" href="images/app/favicon.png" mce_href="images/app/favicon.png" type="image/x-png">-->
+
+    <link type="text/css" rel="stylesheet" href="css/src/common.css">
+    <link type="text/css" rel="stylesheet" href="css/src/judge/main.css">
+    <script type="text/javascript" src="js/lib/jquery-1.7.1.min.js"></script>
+    <!--[if lte IE 9]>
+    <script src="js/lib/html5.js"></script>
+    <![endif]-->
+    <script type="text/javascript" src="js/src/en/config.js"></script>
+    <script>
+        var href="";
+    </script>
+</head>
+<body class="enBody">
+
+#parse("/en/header.html")
+
+<div class="content topicViewContent">
+    <!--<div>
+        <div class="row">
+            <input type="text" id="searchTitle" class="searchTxt txt" placeholder="搜索标题">
+            <span class="sortPanel">
+                <label>排序：</label>
+                <a href="#" class="DES active" data-order-by="jiangjin" id="orderByMoney">奖金额度</a>
+                &nbsp;|&nbsp;
+                <a href="#" class="DES init"  data-order-by="shuliang" id="orderByWorkCount">作品数量</a>
+            </span>
+        </div>
+
+        <div class="row">
+            <label>参赛类别：</label>
+            <a href="#" class="category" data-category="1">A1 数字化制造与设计创新</a>
+            &nbsp;|&nbsp;
+            <a href="#" class="category" data-category="2">A2 智能产品与服务设计创新</a>
+            &nbsp;|&nbsp;
+            <a href="#" class="category" data-category="3">B 社会化服务设计创新</a>
+        </div>
+    </div>-->
+    <p class="judgeTip">
+        Dear ${expertName},Thank you for being part of the LotusPrize judging process.
+        #if($stage==6||$stage==8)
+            #if($stage==6)
+            We are currently in the judging stage for the 'Innovation Design Award'
+            #else
+            We are currently in the judging stage for the 'Incubation Programme Assessment'
+            #end
+            and have <span class="judgeTopicCount">$!{expertTopics.size()}</span> topics for you to judge.
+        #else
+        As this is a non evaluation stage, you may not give reviews at this moment but you may view your previous scoring.
+        #end
+    </p>
+    <div class="judgeNorm">
+        <h3 class="judgeNormTitle">Judging Criteria</h3>
+        <ul class="judgeNormList">
+            <li class="judgeNormItem">
+                <h4 class="title"><span class="proportion">40%</span>Feasible</h4>
+                <p class="abstract">The most important criteria are the feasibility to the chosen topic given by companies.
+                    The entries should able to be converted to usable products and suitable for mass manufacturing.</p>
+            </li>
+            <li class="judgeNormItem">
+                <h4 class="title"><span class="proportion">20%</span>Innovative</h4>
+                <p class="abstract">Effectively use new technology, new materials, new crafts;
+                    unique innovations that could provide new solutions for current issues;
+                    can lead new trends for the manufacturing, information, intelligent products and service design industry.</p>
+            </li>
+            <li class="judgeNormItem">
+                <h4 class="title"><span class="proportion">20%</span>Economical</h4>
+                <p class="abstract">Suitable for present design development trends, economically and effectively use social
+                    and environmental resources, have high commercial value and market potential,
+                    high value for money design and innovative business model.</p>
+            </li>
+            <li class="judgeNormItem">
+                <h4 class="title"><span class="proportion">20%</span>Environmental</h4>
+                <p class="abstract">Green, low carbon, energy efficient, new energy;
+                    considering the ecological compatibility, being responsible,
+                    insightful and considerate for society and the environment.</p>
+            </li>
+        </ul>
+    </div>
+
+    <ul class="itemList" id="topicList">
+        #if($stage>=8)
+            #foreach($c in $expertTopicsByCategory)
+            <li class="item">
+                <a href="s/expert/topic/${c.category}?_lang=en&categoryStatus=${c.cnt},${c.scoredCnt}">
+                    <img src="data/category${velocityCount}.jpg" class="thumb">
+                    <p class="infoRow">
+                        <span class="spanTxt">Work Count：${c.cnt}</span>
+                        <span class="spanTxt money right">Scored：${c.scoredCnt}</span>
+                    </p>
+                    <p  class="infoRow lastInfoRow">
+
+                        #if($c.category=="1")
+                            <span class="title spanTxt" title="Digital Manufacturing ">
+                                Digital Manufacturing
+                            </span>
+                        #elseif($c.category=="2")
+                            <span class="title spanTxt" title="Intelligent Products">
+                                 Intelligent Products
+                            </span>
+                        #elseif($c.category=="3")
+                            <span class="title spanTxt" title="Social Innovation">
+                                 Social Innovation
+                            </span>
+                        #end
+
+                        <span class="spanTxt right">
+                            #if($c.category=="1")
+                                A1
+                            #elseif($c.category=="2")
+                                A2
+                            #elseif($c.category=="3")
+                                B
+                            #end
+                        </span>
+                    </p>
+                </a>
+            </li>
+            #end
+        #else
+            #foreach($topic in $expertTopics)
+            <li class="item">
+                <a href="s/expert/topic/${topic.topicId}?_lang=en">
+                    <img src="${topic.topicProfile}" class="thumb">
+                    <p class="infoRow">
+                        <span class="spanTxt">Work Count：${topic.cnt}</span>
+                        <span class="spanTxt money right">Scored：${topic.scoredCnt}</span>
+                    </p>
+                    <p  class="infoRow lastInfoRow">
+                        <span class="title spanTxt" title="${topic.topicName}">${topic.topicName}</span>
+                        <span class="spanTxt right">
+                            #if($topic.topicCategory=="1")
+                                A1
+                            #elseif($topic.topicCategory=="2")
+                                A2
+                            #elseif($topic.topicCategory=="3")
+                                B
+                            #end
+                        </span>
+                    </p>
+                </a>
+            </li>
+            #end
+        #end
+
+
+    </ul>
+</div>
+#include("/en/footer.html")
+</body>
+</html>

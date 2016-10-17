@@ -1,0 +1,197 @@
+.pageHeader{
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+/**
+*附件
+*/
+a.attachment{
+    font-size: 12px;
+    padding: 0 10px 0 30px;
+    line-height: 30px;
+    text-decoration: none;
+    display: block;
+    position: relative;
+    white-space: nowrap;
+    width: 40%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-left: 15%;
+
+}
+a.attachment:before{
+    content: "";
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    position: absolute;
+    border-radius: 10px;
+    top: 5px;
+    left: 5px;
+    background: url(../../../images/app/delete.png) center center no-repeat #FF3399;
+}
+
+/*
+* 覆盖common
+*/
+.tagList.onlyTxt{
+    margin-left: 0px;
+}
+.tagList.onlyTxt li{
+    color:#FF3399;
+}
+.download{
+    text-decoration: underline;
+    margin-left: 5px;
+}
+
+/*
+*文件列表
+*/
+.mediaList{
+    position: absolute;
+    width:160px;
+    background: url(../../../images/app/lineBg.png) repeat-y right;
+    min-height: 400px;
+}
+.mediaList li.active{
+    background: url(../../../images/app/rightArrow.png) no-repeat right;
+}
+.mediaList li a{
+    display: inline-block;
+    height: 100%;
+    width: 153px;
+}
+.mediaList li.active a{
+    color: #33cc99;
+}
+.mediaList li .name{
+    width: 80%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    font-size: 14px;
+    height: 20px;
+    line-height: 20px;
+    cursor: move;
+}
+.mediaList li .delete{
+    font-size: 0px;
+    background: url(../../../images/app/deleteGray.png) no-repeat center center;
+    width: 16px;
+    height: 20px;
+    display: inline-block;
+    vertical-align: top;
+}
+.mediaInfoPanel{
+    margin-left: 150px;
+}
+.mediaInfoPanel .labelTxt{
+    text-align: center;
+}
+.mediaInfoPanel img{
+    width:60%;
+}
+.mediaInfoPanel .rowContent .txtarea{
+    width:85.7%;
+}
+
+
+/*
+*预览
+*/
+.leftAside{
+    position: absolute;
+    width: 25%;
+    font-size: 14px;
+}
+.leftAside .logo{
+    width: 50px;
+}
+.leftAside .companyName{
+    height: 50px;
+    line-height: 50px;
+    font-size: 18px;
+    display: inline-block;
+    vertical-align: top;
+    color:#787878;
+}
+.leftAside .reward{
+    font-size: 16px;
+}
+.leftAside .addition{
+    margin-top: 5px;
+    line-height: 32px;
+    white-space: pre-wrap;
+}
+.leftAside .btn{
+    height: 30px;
+    line-height: 30px;
+    font-size: 14px;
+    min-width: 100px;
+    margin-bottom: 5px;
+}
+.articleContent{
+    margin-left:25%;
+    padding:0px 5% 20px 5%;
+}
+.articleContent h1{
+    font-size: 24px;
+}
+.articleContent .description{
+    color:#787878;
+    margin: 30px 0px;
+}
+.articleContent .download{
+    text-decoration: underline;
+    margin-left: 5px;
+}
+.descriptionImg{
+    position: relative;
+    font-size: 0px;
+    margin:10px 0px;
+}
+.descriptionImg img{
+    width: 100%;
+}
+.descriptionImg .imgInfo{
+    position: absolute;
+    overflow: hidden;
+    height: 75px;
+    width: 100%;
+    bottom:0px;
+    opacity: .6;
+    filter: progid:DXImageTransform.Microsoft.Alpha(opacity=60);
+    color: #fff;
+    background: #000;
+}
+.descriptionImg .imgInfo .imgInfoContent{
+    font-size: 14px;
+    line-height: 28px;
+    margin:10px 45px 10px 0px;
+    padding:0px 15px;
+    box-sizing: border-box;
+}
+.descriptionImg .imgInfo .imgInfoContent a{
+    color: #33cc99;
+    margin-left: 5px;
+}
+.descriptionImg .imgInfo .showMore{
+    cursor: pointer;
+    width: 45px;
+    height: 100%;
+    display: block;
+    position: absolute;
+    background: url(../../../images/app/showMore.png) no-repeat left 15px;
+    top:0px;
+    right: 0px;
+    font-size: 0px;
+    color: #fff;
+    text-align: center;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}

@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.zhongyi.lotusprize.mapper.topic.TopicMapper">
+
+	<resultMap id="topicMap" type="com.zhongyi.lotusprize.domain.topic.Topic">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="own_account_id" property="ownAccountId" jdbcType="INTEGER" />
+		<result column="category" property="category" jdbcType="SMALLINT" />
+		<result column="artifact_amount" property="artifactAmount" jdbcType="INTEGER" />
+		<result column="corp_logo" property="corpLogo" jdbcType="VARCHAR" />
+		<result column="reward" property="reward" jdbcType="DOUBLE" />
+		<result column="video" property="video" jdbcType="VARCHAR" />
+		<result column="profile" property="profile" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+		<collection property="topicDetails" column="id" resultMap="topicDetailMap" />
+	</resultMap>
+	
+	<resultMap id="topicDetailMap" type="com.zhongyi.lotusprize.domain.topic.TopicDetail">
+		<id column="topic_id" property="topicId" jdbcType="INTEGER" />
+		<id column="lang" property="lang" jdbcType="CHAR" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="description" property="description" jdbcType="VARCHAR" />
+		<result column="corp" property="corp" jdbcType="VARCHAR" />
+		<result column="addition" property="addition" jdbcType="VARCHAR"/>
+		<result column="attachment" property="attachment" jdbcType="VARCHAR" />
+		<collection property="topicIntroduces" column="{topic_id=topic_id,lang=lang}" resultMap="topicIntroduceMap" />
+	</resultMap>
+	
+	<resultMap id="topicIntroduceMap" type="com.zhongyi.lotusprize.domain.topic.TopicIntroduce">
+		<id column="topic_id" property="topicId" jdbcType="INTEGER" />
+		<id column="lang" property="lang" jdbcType="CHAR" />
+		<id column="pos"  property="pos" jdbcType="INTEGER" />		
+		<result column="text" property="text" jdbcType="VARCHAR"/>
+		<result column="image" property="image" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="iterTopic" resultMap="topicMap">
+        select t.id,t.own_account_id,t.category,t.artifact_amount,t.corp_logo,t.reward,t.video,t.profile,t.create_time,
+        d.topic_id,d.lang,d.topic_setting_id,d.title,d.description,d.corp,d.addition,d.attachment,i.pos,i.text,i.image
+        from topic t left join topic_detail d on t.id=d.topic_id
+        left join topic_introduce i on d.topic_id=i.topic_id and d.lang=i.lang
+        where t.id &gt;#{baseTopicId} order by t.id asc limit ${limit}
+    </select>
+	
+	<select id="loadByTopicId" parameterType="java.lang.Integer" resultMap="topicMap">
+		select id,own_account_id,category,artifact_amount,corp_logo,reward,video,profile,create_time from topic
+		where id=#{topicId}
+	</select>
+	
+	<select id="findTopicDetailByTopicId" parameterType="java.lang.Integer" resultMap="topicDetailMap">
+		select d.topic_id,d.lang,d.topic_setting_id,d.title,d.description,d.corp,d.addition,d.attachment,i.pos,i.text,i.image
+		from topic_detail d left join topic_introduce i on d.topic_id=i.topic_id and d.lang=i.lang
+		where d.topic_id=#{topicId}
+	</select>
+	
+	
+	<insert id="insertTopic" parameterType="com.zhongyi.lotusprize.domain.topic.Topic">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+		insert into topic(own_account_id,category,artifact_amount,corp_logo,reward,video,profile,create_time)
+		values(#{ownAccountId,jdbcType=INTEGER},#{category,jdbcType=SMALLINT},#{artifactAmount,jdbcType=INTEGER},#{corpLogo,jdbcType=VARCHAR},#{reward,jdbcType=DOUBLE},#{video,jdbcType=VARCHAR},#{profile,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP})
+	</insert>
+	
+	<insert id="insertTopicDetail">
+		insert into topic_detail(topic_id,topic_setting_id,lang,title,description,corp,addition,attachment)
+		values(#{topicId,jdbcType=INTEGER},#{topicDetail.topicSettingId,jdbcType=INTEGER},#{topicDetail.lang,jdbcType=CHAR},
+		#{topicDetail.title,jdbcType=VARCHAR},#{topicDetail.description},#{topicDetail.corp,jdbcType=VARCHAR},
+		#{topicDetail.addition,jdbcType=VARCHAR},#{topicDetail.attachment,jdbcType=VARCHAR})
+	</insert>
+	
+	<insert id="insertTopicIntroduces">
+		insert into topic_introduce(topic_id,lang,pos,text,image) values
+		<foreach collection="topicIntroduces" item="item" index="index"	separator=",">
+			(#{topicId,jdbcType=INTEGER},#{lang,jdbcType=CHAR},#{item.pos,jdbcType=INTEGER},#{item.text,jdbcType=VARCHAR},#{item.image,jdbcType=VARCHAR})
+		</foreach>
+	</insert>
+	
+	<select id="countBy" resultType="java.lang.Integer">
+		select count(distinct(t.id)) FROM topic t left join topic_detail d on t.id=d.topic_id
+		<trim prefix="WHERE" prefixOverrides="AND |OR">
+			d.lang=#{lang}
+			<if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(category)">
+				AND t.category = #{category}
+			</if>
+			<if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(title)">
+				AND d.title like CONCAT('%', #{title}, '%')
+			</if>
+		</trim>
+	</select>
+	
+	<select id="findTopicIdBy" resultType="java.lang.Integer">
+		SELECT distinct(t.id) FROM topic t left join topic_detail d on t.id=d.topic_id
+		<trim prefix="where" prefixOverrides="AND |OR"> 
+			d.lang=#{lang}
+			<if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(category)">
+				AND t.category = #{category}
+			</if>
+			<if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(title)">
+				AND d.title like CONCAT('%', #{title}, '%')
+			</if>
+		</trim>
+		ORDER BY t.pos DESC,${orderby} ${ordering} LIMIT ${limit} OFFSET ${offset} 
+	</select>
+	
+	
+	<select id="findTopicIdByAdmin" resultType="java.lang.Integer">
+        SELECT distinct(t.id) FROM topic t left join topic_detail d on t.id=d.topic_id
+        <trim prefix="where" prefixOverrides="AND |OR"> 
+            d.lang=#{lang}
+            <if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(category)">
+                AND t.category = #{category}
+            </if>
+            <if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(title)">
+                AND d.title like CONCAT('%', #{title}, '%')
+            </if>
+        </trim>
+        ORDER BY ${orderby} ${ordering} LIMIT ${limit} OFFSET ${offset} 
+    </select>
+
+	<update id="updateTopic" parameterType="com.zhongyi.lotusprize.domain.topic.Topic">
+		update topic set 
+		own_account_id=#{ownAccountId,jdbcType=INTEGER},
+		category=#{category,jdbcType=SMALLINT},
+		corp_logo=#{corpLogo,jdbcType=VARCHAR},
+		reward=#{reward,jdbcType=DOUBLE},
+		video=#{video,jdbcType=VARCHAR},
+		profile=#{profile,jdbcType=VARCHAR},
+		update_time=current_timestamp()
+		where id=#{id}
+	</update>
+	
+	<update id="updateTopicDetail">
+		update topic_detail set
+	 	title=#{topicDetail.title,jdbcType=VARCHAR},
+		description=#{topicDetail.description,jdbcType=VARCHAR},
+		corp=#{topicDetail.corp,jdbcType=VARCHAR},
+		addition=#{topicDetail.addition,jdbcType=VARCHAR},
+		attachment=#{topicDetail.attachment,jdbcType=VARCHAR}
+		where topic_id=#{topicId} and lang=#{topicDetail.lang}
+	</update>
+	
+	<delete id="deleteTopicIntroductionByTopicIdAndLang">
+		delete from topic_introduce where topic_id=#{topicId} and lang=#{lang}
+	</delete>
+	
+	<delete id="deleteByTopicId">
+		delete topic,topic_detail,topic_introduce
+		from topic left join topic_detail on topic.id=topic_detail.topic_id
+		left join topic_introduce on topic.id=topic_introduce.topic_id
+		where topic.id=#{topicId}
+	</delete>
+	
+	<update id="incrArtifactAmount">
+		update topic set artifact_amount=artifact_amount+#{incrValue,jdbcType=INTEGER}
+		where topic.id=#{topicId}
+	</update>
+	
+	<update id="updateVideo">
+		update topic set video=#{video,jdbcType=VARCHAR}
+		where topic.id=#{topicId}
+	</update>
+	
+	<update id="updateProfile">
+		update topic set profile=#{profile,jdbcType=VARCHAR}
+		where topic.id=#{topicId}
+	</update>
+	
+	<update id="updateCorpLogo">
+		update topic set corp_logo=#{corpLogo,jdbcType=VARCHAR}
+	    where topic.id=#{topicId}
+	</update>
+	
+	<update id="updateTopicDetailAttachment">
+		update topic_detail set attachment=#{attachment,jdbcType=VARCHAR}
+		where topic_id=#{topicId} and lang=#{lang}
+	</update>
+	
+	<update id="updateTopicIntroductImage">
+		update topic_introduce set image=#{image,jdbcType=VARCHAR}
+		where topic_id=#{topicId} and lang=#{lang} and pos=#{pos}
+	</update>
+	
+	<select id="findTopicIdByAccountIdAndLang" resultType="java.lang.Integer">
+		select t.id from topic t inner join topic_detail d on t.id=d.topic_id
+	 	where own_account_id=#{accountId} and d.lang=#{lang}
+	</select>
+	
+
+</mapper>        

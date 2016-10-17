@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    #include("/baseUrl.html")
+
+    <!--<meta charset="utf-8">
+    <base href="http://localhost/lotusprizeWeb2014/">
+    <title>2014第四届“芙蓉杯”国际工业设计创新大赛</title>
+    <link rel="shortcut icon" href="images/app/favicon.png" mce_href="images/app/favicon.png" type="image/x-png">-->
+
+    <link href="css/lib/jquery.toastmessage.css" rel="stylesheet" type="text/css">
+    <link type="text/css" rel="stylesheet" href="css/src/common.css">
+    <link type="text/css" rel="stylesheet" href="css/src/judge/main.css">
+    <script type="text/javascript" src="js/lib/jquery-1.7.1.min.js"></script>
+    <!--[if lte IE 9]>
+    <script src="js/lib/html5.js"></script>
+    <![endif]-->
+    <script type="text/javascript" src="js/lib/jquery.jqpagination.min.js"></script>
+    <script type="text/javascript" src="js/lib/juicer-min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.toastmessage.js"></script>
+    <script type="text/javascript" src="js/src/config.js"></script>
+    <script type="text/javascript" src="js/src/judge/showWork.js"></script>
+    <style type="text/css">
+        .topHeader{
+            box-shadow: none;
+        }
+    </style>
+    <script>
+        var href="";
+        var topicId='$!{topic.id}';
+        var category='$!{category}';
+        var stage="${stage}";
+    </script>
+</head>
+<body>
+<script type="text/template" id="workArrayTpl">
+    {@each workArray as work}
+    <li class="item workItem">
+        <a href="s/user/artifact/show/${work.id}" data-work-id="${work.id}">
+            <img src="${work.profile}" class="thumb">
+            <h3 class="workTitle" title="${work.title}">
+                ${work.title}
+            </h3>
+            <p class="score" data-score="${work.score}">
+                {@if work.score!=-1}
+                    ${work.score}分
+                {@else}
+                    未打分
+                {@/if}
+            </p>
+        </a>
+    </li>
+    {@/each}
+</script>
+
+#parse("/header.html")
+
+#if($stage<=7)
+    <div class="topicDetail">
+        <a href="s/expert" class="return">&lt;返回我的选题列表</a>
+        <img class="companyLogo" src="${topic.corpLogo}">
+        <a class="title" target="_blank" href="s/topic/view/${topic.id}" title="${topic.name}">${topic.name}</a>
+        <p>${topic.corpName}</p>
+        <span class="money">&yen;${topic.reward}</span>
+    </div>
+    <div class="countContainer">
+        已评&nbsp;<span class="countScored" id="countScored">${topic.scoredCnt}</span>/<span class="countTotal">${topic.cnt}</span>
+    </div>
+#else
+    <div class="topicDetail topicDetail2">
+        <a href="s/expert" class="return">&lt;返回我的主页</a>
+    </div>
+    <div class="countContainer countContainer2">
+        已评&nbsp;<span class="countScored" id="countScored">${scoredCnt}</span>/<span class="countTotal">${cnt}</span>
+    </div>
+#end
+<div class="content topicViewContent">
+    <div class="contentHeader">
+        <div class="row">
+            #if($stage<=7)
+            <input type="text" id="searchTitle" class="searchTxt txt" placeholder="搜索标题">
+            #end
+
+            <span class="sortPanel">
+                <label>是否打分：</label>
+                <a href="#" class="queryItem active" data-is-score="all">全部</a>
+                &nbsp;|&nbsp;
+                <a href="#" class="queryItem" data-is-score="unscored">未打分</a>
+                &nbsp;|&nbsp;
+                <a href="#" class="queryItem" data-is-score="scored">已打分</a>
+            </span>
+        </div>
+    </div>
+    <ul class="itemList" id="workList">
+        <!--<li class="item workItem">
+            <a href="s/topic/view/${id}">
+                <img src="images/app/defaultThumb.jpg" class="thumb">
+                <h3 class="workTitle" title="dddd">作品的标题作品的标题作品的标题作品的标题作品的标题作品的标题作品的
+                    标题作品的标题作品的标题作品的标题作品的标题作品的标题
+                </h3>
+                <p class="score">
+                    资格审核中
+                </p>
+            </a>
+        </li>-->
+
+    </ul>
+    <div id="ownPagination" class="ownPagination">
+        <a href="#" class="first" data-action="first">首页</a>
+        <a href="#" class="previous" data-action="previous">上一页</a>
+        <input type="text" readonly="readonly" class="showPageInfo"/>
+        <a href="#" class="next" data-action="next">下一页</a>
+        <a href="#" class="last" data-action="last">末页</a>
+    </div>
+</div>
+
+<!--显示作品-->
+<div class="popWindowContainer hidden" id="popWindowContainer">
+    <div id="popWindow" class="popWindow">
+        <a class="prevWork pageItem" id="prevWork" data-work-id="0" href="#">上一个</a>
+        <div class="toolbar">
+            <a href="#" id="closePopWindow">关闭</a>
+        </div>
+        <div class="workInfo detailPageInfo" id="workInfo">
+
+        </div>
+        <a class="nextWork pageItem" id="nextWork" data-work-id="0" href="#">下一个</a>
+        <div class="judgeContainer">
+
+            <input type="hidden" id="workId" value="">
+            <p class="scoreTitle">当前评分</p>
+            <p id="score" class="score">
+                99
+            </p>
+            #if($stage==6||$stage==8)
+            <p class="scoreInputContainer">
+                <input type="text" class="scoreInput" id="scoreInput"><button id="scoreBtn" class="scoreBtn">提交</button>
+            </p>
+            <p class="scoreTip">
+                请输入0-100的任意整数
+            </p>
+            <p class="normTitle">
+                评审标准:
+            </p>
+            <p class="normItem">
+                <span class="text">可行性</span><span class="percent">40%</span>
+            </p>
+            <p class="normItem">
+                <span class="text">创新型</span><span class="percent">20%</span>
+            </p>
+            <p class="normItem">
+                <span class="text">经济性</span><span class="percent">20%</span>
+            </p>
+            <p class="normItem">
+                <span class="text">环保性</span><span class="percent">20%</span>
+            </p>
+            #end
+        </div>
+    </div>
+</div>
+
+#include("/footer.html")
+</body>
+</html>

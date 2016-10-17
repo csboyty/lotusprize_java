@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2014芙蓉杯官网-国际工业设计创新大赛</title>
+<style>
+@page { 
+size: 420mm 297mm; 
+border: none;
+}
+body{ font-family:STZhongsong; margin:0;position:relative;}
+img{padding:0;margin:0;border:none;}
+.contain{height:700px;}
+.bar{border:0; overflow:hidden;zoom:1;background:#93c200; color:#fff; font-size:16px;position:absolute;left:0;top:0;z-index:99;width:100%;}
+.num{float:left;background:url(file:///C:/Users/zzy/workspace/lotusprize/src/main/webapp/images/app/bar.png) no-repeat right #669139; width:125px;height:33px; line-height:33px; padding-left:50px;}
+.nownum{ font-size:26px;}
+.title{float:left;height:33px; line-height:33px; font-size:14px; vertical-align:bottom;}
+.titlename{font-size:20px; margin-right:15px;}
+.img{width:100%;text-align:center}
+.img img{/* max-width:100%; */width:auto;height:250mm;}
+.attaDescription{text-align:center;height:48px;line-height:24px;overflow:hidden;color:#999;margin-top:10px;word-break:break-all;word-wrap:break-word;font-size:18px;}
+
+</style>
+</head>
+<body>
+<div class="contain">
+<div class="img">
+<img src="$lotusprizeTool.escapeUrlPath(${introduce.image})" />
+</div>
+<div class="attaDescription">$lotusprizeTool.escapeXml(${introduce.text})</div>
+</div>
+</body>
+
+</html>

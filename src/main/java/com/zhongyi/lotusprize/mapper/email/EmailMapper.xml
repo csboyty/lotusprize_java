@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.zhongyi.lotusprize.mapper.email.EmailMapper">
+	
+	<resultMap id="emailItemMap" type="com.zhongyi.lotusprize.domain.email.EmailItem">
+		<id column="ei_id" property="id" jdbcType="INTEGER" />
+		<result column="ei_address" property="address" jdbcType="VARCHAR" />
+		<result column="ei_status" property="status" jdbcType="CHAR" />
+		<result column="ei_type" property="type" jdbcType="CHAR" />
+		<association property="body" resultMap="emailBodyMap" />
+	</resultMap>
+	
+	<resultMap id="emailBodyMap" type="com.zhongyi.lotusprize.domain.email.EmailBody">
+		<result column="eb_subject" property="subject" jdbcType="VARCHAR" />
+		<result column="eb_text"  property="text" jdbcType="VARCHAR" />
+		<result column="eb_attachment" property="attachment" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap id="accountActiveEmailMap" type="com.zhongyi.lotusprize.domain.email.AccountActiveEmail">
+		<id column="inactive_account_id" property="inactiveAccountId" jdbcType="INTEGER" />
+		<result column="item_id" property="emailItemId" jdbcType="INTEGER" />
+		<result column="token" property="token" jdbcType="CHAR" />
+	</resultMap>
+	
+	<resultMap id="accountResetPasswordMap" type="com.zhongyi.lotusprize.domain.email.AccountResetPasswordEmail">
+		<id column="account_id" property="accountId" jdbcType="INTEGER" />
+		<result column="item_id" property="emailItemId" jdbcType="INTEGER" />
+		<result column="password" property="password" jdbcType="CHAR" />
+		<result column="token" property="token" jdbcType="CHAR" />
+	</resultMap>
+	
+	<insert id="insertEmailItem" parameterType="com.zhongyi.lotusprize.domain.email.EmailItem">
+		<selectKey resultType="java.lang.Integer" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO email_item(ei_address,ei_status,ei_type,ei_create_time,ei_server_id)
+        VALUES(#{address,jdbcType=VARCHAR},#{status,jdbcType=CHAR},#{type,jdbcType=CHAR},#{createTime,jdbcType=TIMESTAMP},#{serverId,jdbcType=CHAR})
+	</insert>
+	
+	<insert id="insertEmailBody" parameterType="com.zhongyi.lotusprize.domain.email.EmailBody">
+		INSERT INTO email_body(eb_item_id,eb_subject,eb_text,eb_attachment)
+		VALUES(#{emailItemId,jdbcType=INTEGER},#{emailBody.subject,jdbcType=VARCHAR},#{emailBody.text,jdbcType=VARCHAR},#{emailBody.attachment,jdbcType=VARCHAR})
+	</insert>
+	
+	<insert id="insertAccountActiveEmail" parameterType="com.zhongyi.lotusprize.domain.email.AccountActiveEmail">
+		INSERT INTO account_active_email(inactive_account_id,item_id,token)
+		VALUES(#{inactiveAccountId,jdbcType=INTEGER},#{emailItemId,jdbcType=INTEGER},#{token,jdbcType=CHAR})
+	</insert>
+	
+	<insert id="insertOrUpdateAccountResetPasswordEmail" parameterType="com.zhongyi.lotusprize.domain.email.AccountResetPasswordEmail">
+		INSERT INTO account_reset_password_email(account_id,item_id,password,token)
+		VALUES(#{accountId,jdbcType=INTEGER},#{emailItemId,jdbcType=INTEGER},#{password,jdbcType=CHAR},#{token,jdbcType=CHAR})
+		ON DUPLICATE KEY UPDATE
+		item_id=#{emailItemId,jdbcType=INTEGER},password=#{password,jdbcType=CHAR},token=#{token,jdbcType=CHAR}
+	</insert>
+	
+	<delete id="deleteAccountActiveEmailByInactiveAccounId" parameterType="java.lang.Integer">
+		DELETE account_active_email,email_item,email_body
+		FROM account_active_email
+		INNER JOIN email_item ON account_active_email.item_id=email_item.ei_id
+		INNER JOIN email_body ON email_item.ei_id=email_body.eb_item_id
+		WHERE account_active_email.inactive_account_id=#{inactiveAccountId}
+	</delete>
+	
+	<delete id="deleteAccountResetPasswordEmailByAccountIdAndToken">
+		DELETE account_reset_password_email,email_item,email_body
+		FROM account_reset_password_email
+		INNER JOIN email_item ON account_reset_password_email.item_id=email_item.ei_id
+		INNER JOIN email_body ON email_item.ei_id=email_body.eb_item_id
+		WHERE account_reset_password_email.account_id=#{accountId} AND account_reset_password_email.token=#{token}
+	</delete>
+	
+	<select id="accountActiveEmailByInactiveAccountId" parameterType="java.lang.Integer" resultMap="accountActiveEmailMap">
+		SELECT inactive_account_id,item_id,token FROM account_active_email
+		WHERE inactive_account_id=#{inactiveAccountId}
+	</select>
+	
+	<select id="accountResetPasswordEmailByAccountId" parameterType="java.lang.Integer" resultMap="accountResetPasswordMap">
+		SELECT account_id,item_id,password,token FROM account_reset_password_email
+		WHERE account_id=#{accountId}
+	</select>
+	
+	<select id="findFirst20EmailItemOnWaiting" resultMap="emailItemMap">
+		SELECT ei_id,ei_address,ei_status,ei_type,eb_subject,eb_text,eb_attachment
+		FROM email_item INNER JOIN email_body on email_item.ei_id=email_body.eb_item_id
+		WHERE ei_id &gt; #{offsetEmailItemId} AND ei_server_id=#{serverId} AND ei_status='waiting' ORDER BY ei_create_time ASC LIMIT 20
+	</select>
+	
+	<update id="updateEmailItemOnSent">
+		UPDATE email_item SET ei_send_time=#{sendTime,jdbcType=TIMESTAMP},ei_status=#{status,jdbcType=CHAR}
+		WHERE ei_id=#{emailItemId}
+	</update>
+
+</mapper>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    #include("/baseUrl.html")
+    <!--<meta charset="utf-8">
+    <base href="http://localhost/lotusprizeWeb2014/">
+    <title>2014第四届“芙蓉杯”国际工业设计创新大赛</title>-->
+
+    <link type="text/css" rel="stylesheet" href="css/lib/jquery.toastmessage.css">
+    <link type="text/css" rel="stylesheet" href="css/lib/jquery.dataTables.css">
+    <link type="text/css" rel="stylesheet" href="css/src/common.css">
+    <script type="text/javascript" src="js/lib/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/lib/juicer-min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.toastmessage.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="js/src/config.js"></script>
+    <script type="text/javascript" src="js/src/admin/workMgr.js"></script>
+    <script>
+        var href="s/topic/mgr";
+        var topicId="${topic.id}";
+    </script>
+</head>
+<body>
+<script type="text/template" id="userTpl">
+    <p>姓名:${fullname}</p>
+    <p>电话:${mobile}</p>
+    <p>地址:${address}</p>
+    <p>邮箱:${email}</p>
+    <p>组织:${accountProfile.organization}</p>
+</script>
+<script type="text/template" id="judgeRecordTpl">
+    <p class="txtRight">总分：${totalScore}</p>
+    <table class="dataTable">
+        <thead>
+        <tr>
+            <th>评委</th>
+            <th>评分</th>
+
+            {@if round==1}
+            <th>权重</th>
+            <th>权重分</th>
+            {@/if}
+        </tr>
+        </thead>
+        <tbody>
+        {@if round==1}
+            {@each rows as row}
+            <tr>
+                <td>${row.expertName}</td>
+                <td>${row.score}</td>
+                <td>${row.weight}</td>
+                <td>${row.weightScore}</td>
+            </tr>
+            {@/each}
+        {@else}
+            {@each rows as row}
+            <tr>
+                <td>${row.expertName}</td>
+                <td>${row.score}</td>
+            </tr>
+            {@/each}
+        {@/if}
+
+        </tbody>
+    </table>
+</script>
+<script type="text/template" id="prizeTpl">
+    <span class="prize" title="${prizeContent}" data-work-id="${workId}" data-prize="${prize}">${prizeContent}<a class="deletePrize" href="#">删除</a></span>
+</script>
+
+#parse("/header.html")
+
+<section class="main">
+
+    #include("/admin/adminMenu.html")
+
+    <article class="content">
+        <section>
+            <div class="row">
+                <label>选题名称:</label><label>${topic.name}</label>
+            </div>
+            <div class="row">
+                <input type="text" class="searchTxt txt" id="searchTitle" placeholder="搜索标题">
+                #if($stage>=6)
+                <span class="sortPanel">
+                    <label>排序：</label>
+                    <!--<a href="#" class="DES active" data-order-by="time" id="orderByTime">时间</a>-->
+                    <a href="#" class="DES init" data-order-by="totalScore1" id="orderByScore">一轮评分</a>
+
+                    #if($stage>=8)
+                    &nbsp;|&nbsp;
+                    <a href="#" class="DES init" data-order-by="totalScore2" id="orderByScore2">二轮评分</a>
+                    #end
+                    #if($stage>=7)
+                    &nbsp;|&nbsp;
+                    <a href="#" class="DES init"  data-order-by="praise" id="orderByPraise">赞</a>
+                    #end
+                </span>
+                #end
+            </div>
+
+            <div class="row asInBlock">
+                <label>状态：</label>
+                <select id="statusSelect">
+                    <option value="">全部</option>
+                    <option value="1">待审核</option>
+                    <option value="2">审核通过</option>
+                    <option value="3">审核未通过</option>
+                    <option value="4">进入一轮评审</option>
+                    <!--<option value="dejiang">等奖</option>-->
+                </select>
+            </div>
+
+            <!--#if($stage>=8)
+            <div class="row asInBlock hasLeftMargin">
+                <label>评审结果：</label>
+                <select id="roundSelect">
+                    <option value="2">第二轮</option>
+                    <option value="1">第一轮</option>
+                </select>
+            </div>
+            #end-->
+
+            <div class="row">
+                <!--<span>
+                    <a href="#" id="checkAllBtn">全选</a>&nbsp;|&nbsp;<a href="#" id="unCheckAllBtn">清除所选</a>
+                    &nbsp;|&nbsp;<a href="#" id="reverseCheckBtn">反选</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                </span>-->
+
+                #if($stage==3)
+                <span class="batchOptContainer">
+                    <label for="batchSetStatus">将所选标记为：</label>
+                    <select id="batchSetStatus" class="batchOptSelect">
+                        <option value="">请选择</option>
+                        <option value="1">待审核</option>
+                        <option value="2">审核通过</option>
+                        <option value="3">审核未通过</option>
+                        <option value="4">进入一轮评审</option>
+                    </select>
+                </span>
+                #end
+
+                #if($stage>=6)
+                <span class="batchOptContainer">
+                    <label for="batchSetPrize">为所选添加奖项：</label>
+                    <select id="batchSetPrize" class="batchOptSelect">
+                        <option value="">请选择</option>
+                        <option value="0">未获奖</option>
+                        <option value="1">网络人气奖</option>
+                        <option value="2">创新设计优秀奖铜奖</option>
+                        <option value="4">创新设计优秀奖银奖</option>
+                        <option value="8">创新设计优秀奖金奖</option>
+                        #if($stage>8)
+                        <option value="16">最佳商业潜力奖</option>
+                        <option value="32">未来之星奖</option>
+                        <option value="64">最佳视觉效果奖</option>
+                        <option value="128">最佳社会创新奖</option>
+                        <option value="256">最佳智能设计奖</option>
+                        <option value="512">最佳科技创新奖</option>
+                        <option value="1024">至尊大奖</option>
+                        #end
+                        <option value="2048">优秀奖</option>
+                        <option value="4096">创新应用奖</option>
+                    </select>
+                </span>
+                #end
+
+                #if($stage==7)
+                <span class="batchOptContainer">
+                    <label for="batchSetRound">轮数：</label>
+                    <select id="batchSetRound" class="batchOptSelect">
+                        <option value="">请选择</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                    </select>
+                </span>
+                #end
+
+                #if($stage==8)
+                <span class="batchOptContainer">
+                    <label for="batchSetHatch">是否孵化：</label>
+                    <select id="batchSetHatch" class="batchOptSelect">
+                        <option value="">请选择</option>
+                        <option value="0">否</option>
+                        <option value="1">是</option>
+                    </select>
+                </span>
+                #end
+            </div>
+
+        </section>
+
+        <section>
+            <table id="workTable">
+                <thead>
+                <tr>
+                    <th><input type="checkbox" id="checkAll"></th>
+                    <th>标题</th>
+                    <th>状态</th>
+                    <th>一轮评分</th>
+                    <th>二轮评分</th>
+                    <th>赞</th>
+                    <th>奖项</th>
+                    <th>轮数</th>
+                    <th>孵化</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!--<tr>
+                    <td><input type="checkbox" class="checkRow"> </td>
+                    <td><span class="title">dddddddd</span></td>
+                    <td class="status">审核通过</td>
+                    <td>298</td>
+                    <td>298</td>
+                    <td class="prizes">
+                        <span title="ddd" data-prize="4" data-work-id="1" class="prize">创新设计优秀奖金奖<a href="#" class="deletePrize">删除</a></span>
+                        <span title="ddd" data-prize="8" data-work-id="1"  class="prize">最佳智能设计奖<a href="#" class="deletePrize">删除</a></span>
+                        <span title="ddd" data-prize="16" data-work-id="1" class="prize">网络人气奖<a href="#" class="deletePrize">删除</a></span>
+                    </td>
+                    <td><a href="#" class="check">上传者</a></td>
+                </tr>-->
+                </tbody>
+            </table>
+        </section>
+    </article>
+</section>
+
+<!--显示作品-->
+<div class="popWindowContainer hidden" id="popWindowContainer">
+    <div id="popWindow" class="popWindow">
+        <div class="toolbar">
+            <a href="#" id="closePopWindow">关闭</a>
+
+            #if($stage==3)
+            <div class="rightContainer" id="rightContainer">
+                <label>设置状态：</label>
+                <select id="setWorkStatus" class="setWorkStatus" data-old-status="1" data-work-id="1">
+                    <option value="1">待审核</option>
+                    <option value="2">审核通过</option>
+                    <option value="3">审核未通过</option>
+                    <option value="4">进入一轮评审</option>
+                </select>
+            </div>
+            #end
+
+        </div>
+
+        <div class="workInfo detailPageInfo" id="workInfo">
+
+        </div>
+    </div>
+</div>
+
+#include("/footer.html")
+</body>
+</html>

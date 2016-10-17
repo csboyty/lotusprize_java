@@ -1,0 +1,39 @@
+<div class="wpHeader">
+    <h1 class="logo">
+        <a href="http://www.lotusprize.com/2014/"></a>
+    </h1>
+    <ul class="links headerMenu">
+        <li class="linkItem icsidItem">
+            <a target="_blank" href="http://www.icsid.org/events/events/calendar1307.htm">
+                <img src="images/app/iconIcsid.png">
+            </a>
+        </li>
+        <li class="linkItem cumulItem"><a target="_blank" href="http://www.cumulusassociation.org/component/content/1921-call-for-entries-the-4th-lotusprize-international-design-competition/152">
+            <img src="images/app/iconCumulus.png">
+        </a></li>
+    </ul>
+    <span class="deadLineContainer" href="http://www.lotusprize.com/2014/archives/710">
+        征稿截止剩余天数：<span id="deadLine" class="deadLine">0</span>
+    </span>
+    <div class="wpMenu">
+        <ul class="mainMenu headerMenu" id="menu">
+            <li><a href="http://www.lotusprize.com/2014/" >首页</a></li>
+            <li><a href="s/topic/view">选题</a></li>
+            <li><a href="http://www.lotusprize.com/2014/archives/category/rule">章程</a></li>
+            <li><a href="http://www.lotusprize.com/2014/archives/category/judge">评委</a></li>
+            <li><a href="s/gallery">获奖</a></li>
+        </ul>
+        <ul class="wpOptMenu headerMenu">
+            #if($authInfo.authenticated)
+            <li><a href="s/${authInfo.roleName}">我的芙蓉杯</a></li>
+            <li><a href="s/logout">退出</a></li>
+            #else
+            <li><a href="s/login">登录</a></li>
+            #end
+        </ul>
+        <ul class="langMenu headerMenu">
+            <li><a href="http://www.lotusprize.com/2014/" class="active">中文</a></li>
+            <li><a href="http://www.lotusprize.com/2014en/" >English</a></li>
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zhongyi.lotusprize.mapper.account.InactiveAccountMapper">
+
+	<resultMap id="inactiveAccountMap" type="com.zhongyi.lotusprize.domain.account.InactiveAccount" >
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="fullname" jdbcType="VARCHAR" property="fullname" />
+		<result column="email" jdbcType="VARCHAR" property="email" />
+		<result column="mobile" jdbcType="VARCHAR" property="mobile" />
+		<result column="address" jdbcType="VARCHAR" property="address" />
+		<result column="organization" jdbcType="VARCHAR"  property="organization" />
+		<result column="password" jdbcType="CHAR" property="password" />
+	</resultMap>
+	
+	<select id="loadById" parameterType="java.lang.Integer" resultMap="inactiveAccountMap">
+		SELECT id,fullname,email,mobile,address,organization,password
+		FROM inactive_account WHERE id=#{id}
+	</select>
+	
+	<insert id="insertInActiveAccount" parameterType="com.zhongyi.lotusprize.domain.account.InactiveAccount">
+		<selectKey resultType="java.lang.Integer" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+		INSERT INTO inactive_account(fullname,email,mobile,address,organization,create_time,password)
+		VALUES(#{fullname,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{mobile,jdbcType=VARCHAR},#{address,jdbcType=VARCHAR},#{organization,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{password,jdbcType=CHAR})
+	</insert>
+	
+	<delete id="deleteById" parameterType="java.lang.Integer">
+		DELETE FROM inactive_account WHERE id=#{id}
+	</delete>
+	
+	<delete id="deleteExpired">
+		DELETE inactive_account,account_active_email,email_item,email_body
+		FROM inactive_account
+		LEFT JOIN account_active_email ON inactive_account.id=account_active_email.inactive_account_id
+		LEFT JOIN email_item ON account_active_email.item_id=email_item.ei_id
+		LEFT JOIN email_body ON email_item.ei_id=email_body.eb_item_id
+		WHERE inactive_account.create_time &lt; #{expireTime,jdbcType=TIMESTAMP}
+	</delete>
+	
+	<select id="countByEmail" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(email) from inactive_account where email=#{email}
+	</select>
+	
+
+</mapper>
+

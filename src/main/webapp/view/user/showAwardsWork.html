@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    #include("/baseUrl.html")
+
+    <!--<meta charset="utf-8">
+    <base href="http://localhost/lotusprizeWeb2014/">
+    <title>2014第四届“芙蓉杯”国际工业设计创新大赛</title>
+    <link rel="shortcut icon" href="images/app/favicon.png" mce_href="images/app/favicon.png" type="image/x-png">-->
+
+    <link href="css/lib/jquery.toastmessage.css" rel="stylesheet" type="text/css">
+    <link type="text/css" rel="stylesheet" href="css/src/common.css">
+    <script type="text/javascript" src="js/lib/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.jqpagination.min.js"></script>
+    <script type="text/javascript" src="js/lib/juicer-min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.toastmessage.js"></script>
+    <script type="text/javascript" src="js/lib/md5.min.js"></script>
+    <script type="text/javascript" src="js/src/config.js"></script>
+    <script type="text/javascript" src="js/src/user/showAwardsWork.js"></script>
+    <script type="text/javascript" src="js/src/baiduAnalytics.js"></script>
+    <script>
+        var href="s/gallery";
+        var stage="${stage}";
+        var artifactId="$!{artifactId}";
+        //var initAwards="$!{awards}";
+        //var topics=JSON.parse("$escapeTool.javascript($topicNames)");
+    </script>
+</head>
+<body class="wpBody">
+<script type="text/template" id="workArrayTpl">
+    {@each workArray as work}
+    <li class="item workItem">
+        <a href="s/user/artifact/show/${work.artifactId}?clientId=${clientId}" data-work-id="${work.artifactId}">
+            <div class="thumbContainer">
+                <img src="${work.profile}" class="thumb">
+                <div class="awardsInfo">
+                    <p>${work.category}</p>
+                    <p class="awardsText" title="${work.prize}">${work.prize}</p>
+                </div>
+            </div>
+            <h3 class="workTitle" title="${work.title}">
+                ${work.title}
+            </h3>
+            {@if stage==1}
+            <p class="praise" data-praise-count="${work.totalPraise}">
+                ${work.totalPraise}赞
+            </p>
+            {@/if}
+        </a>
+    </li>
+    {@/each}
+</script>
+
+<!--http://192.168.2.167:9911/lotusprize/s/topicManager/topic/{id}-->
+#parse("/wpHeader.html")
+
+<div class="content wpContent">
+    <div  class="contentHeader">
+        <div class="row">
+            <!--<input type="text" id="searchTitle" class="searchTxt txt" placeholder="搜索标题">-->
+            <div class="row">
+                <label class="txtGray">刷选：</label>
+                <a href="#" class="awards active" data-awards="">全部获奖作品</a>
+                &nbsp;|&nbsp;
+                <a href="#" class="awards" data-awards="1">创新设计优秀奖</a>
+                &nbsp;|&nbsp;
+                <a href="#" class="awards" data-awards="2">孵化项目作品</a>
+                &nbsp;|&nbsp;
+                <a href="#" class="awards" data-awards="3">网络人气奖</a>
+            </div>
+            <div class="row">
+                <label class="txtGray">参赛类别：</label>
+                <a href="#" class="category active" data-category="">全部分类</a>
+                &nbsp;|&nbsp;
+                <a href="#" class="category" data-category="1">A1 数字化制造与设计创新</a>
+                &nbsp;|&nbsp;
+                <a href="#" class="category" data-category="2">A2 智能产品与服务设计创新</a>
+                &nbsp;|&nbsp;
+                <a href="#" class="category" data-category="3">B 社会化服务设计创新</a>
+            </div>
+        </div>
+    </div>
+
+    <ul class="itemList" id="workList">
+        <!--<li class="item workItem">
+            <a href="s/user/artifact/show/${work.id}?clientId=${clientId}" data-work-id="${work.id}">
+                <div class="thumbContainer">
+                    <img src="../../images/app/defaultThumb.jpg" class="thumb">
+                    <div class="awardsInfo">
+                        <p>B1</p>
+                        <p>创新设计优秀奖金奖</p>
+                    </div>
+                </div>
+                <h3 class="workTitle" title="${work.title}">
+                    ${work.title}
+                </h3>
+                <p class="praise" data-praise-count="${work.totalPraise}">
+                    ${work.totalPraise}赞
+                </p>
+            </a>
+        </li>-->
+
+    </ul>
+    <!--<div id="ownPagination" class="ownPagination">
+        <a href="#" class="first" data-action="first">首页</a>
+        <a href="#" class="previous" data-action="previous">上一页</a>
+        <input type="text" readonly="readonly" class="showPageInfo"/>
+        <a href="#" class="next" data-action="next">下一页</a>
+        <a href="#" class="last" data-action="last">末页</a>
+    </div>-->
+</div>
+
+<!--显示作品-->
+<div class="popWindowContainer hidden" id="popWindowContainer">
+    <div id="popWindow" class="popWindow">
+        <div class="toolbar">
+            <a href="#" id="closePopWindow">关闭</a>
+
+            #if($stage==1)
+            <div class="rightContainer txtRight" id="rightContainer">
+                <div id="praiseContainer">
+                    <input type="hidden" id="workId" value="">
+                    <input type="button" class="btn" id="praiseBtn" value="赞">
+                </div>
+                <p id="praised" class="txtRight txtGreen hidden">已赞</p>
+            </div>
+            #end
+
+        </div>
+        <div class="workInfo detailPageInfo" id="workInfo">
+
+        </div>
+    </div>
+</div>
+
+#include("/footer.html")
+</body>
+</html>

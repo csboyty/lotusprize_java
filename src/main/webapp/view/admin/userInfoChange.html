@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    #include("/baseUrl.html")
+    <!--<base href="http://localhost/lotusprizeWeb2014/">-->
+
+    <link href="css/lib/jquery.toastmessage.css" rel="stylesheet" type="text/css">
+    <link href="css/src/common.css" rel="stylesheet" type="text/css">
+
+    <script type="text/javascript" src="js/lib/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.form.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.toastmessage.js"></script>
+    <script type="text/javascript" src="js/src/config.js"></script>
+    <script>
+        var href="s/admin/user/userManage";
+
+        $(document).ready(function(){
+            $("#myForm").submit(function(){
+                config.showBlackout();
+                $(this).ajaxSubmit({
+                    dataType:"json",
+                    success:function(data){
+                        if(data.success){
+                            //config.hideBlackout();
+                            $().toastmessage("showSuccessToast",config.message.optSuccRedirect);
+                            config.redirect("s/admin/user/userManage");
+                        }else{
+                            config.ajaxReturnErrorHandler(data);
+                        }
+                    },
+                    error:function(){
+                        config.ajaxErrorHandler();
+                    }
+                });
+
+                return false;
+            });
+        });
+    </script>
+</head>
+<body>
+#parse("/header.html")
+<section class="main">
+    #include("/admin/adminMenu.html")
+    <article class="content">
+        <form action="s/admin/user/update" method="post" id="myForm">
+            <input type="hidden" name="id" value="$!{user.id}">
+            <div class="row">
+                <label class="labelTxt" for="fullName">姓名</label>
+                <input class="txt" id="fullName" maxlength="30"
+                       type="text" name="fullname" placeholder="请输入全名" required value="$!{user.fullname}">
+            </div>
+            <div class="row">
+                <label class="labelTxt" for="email">邮箱</label>
+                <input class="txt" id="email" maxlength="30"
+                       type="text" name="email" placeholder="请输入邮箱" required value="$!{user.email}">
+            </div>
+            <div class="row">
+                <label class="labelTxt" for="mobile">联系电话</label>
+                <input class="txt" id="mobile" maxlength="20"
+                       type="text" name="mobile" pattern="[\d+-\s]{3,20}" title="+86 0731-98989898/+86 13892932933"
+                       placeholder="+86 0731-98989898/+86 13892932933" required value="$!{user.mobile}">
+            </div>
+            <div class="row">
+                <label class="labelTxt" for="organization">公司名称</label>
+                <input class="txt" id="organization" type="text" maxlength="60"
+                       name="organization" placeholder="请输入公司名称" required value="$!{user.organization}">
+            </div>
+            <div class="row">
+                <label class="labelTxt" for="address">地址</label>
+                <input class="txt" id="address" type="text" maxlength="60"
+                       name="address" placeholder="请输入通讯地址" required value="$!{user.address}">
+            </div>
+            <div class="row percentRow">
+                <hr>
+            </div>
+            <!--<div class="row">
+                <label class="labelTxt" for="pwd">密码</label>
+                <input class="txt" id="pwd" pattern=".{6,20}" name="password" type="password"
+                        title="密码6-20位！" onchange="form.confirmPwd.pattern = this.value" required>
+            </div>
+            <div class="row">
+                <label class="labelTxt" for="confirmPwd">确认密码</label>
+                <input class="txt" id="confirmPwd" title="请与密码一致！" name="confirmPwd" type="password" required>
+            </div>-->
+            <div class="row">
+                <input type="submit" value="确定" class="btn submitBtn">
+            </div>
+        </form>
+    </article>
+</section>
+
+#include("/footer.html")
+</body>
+</html>

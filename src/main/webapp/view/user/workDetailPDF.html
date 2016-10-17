@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style type="text/css">
+        @page{
+            size:420mm 297mm;
+            border:none
+        }
+        body{
+            margin:0px;
+            padding: 0px;
+            font-family:"微软雅黑", "黑体", Arial, "Times New Roman", Verdana;
+            color:#b5b5b5;
+            min-width: 1024px;
+            width: 100%;
+            height: 100%;
+            font-size: 16px;
+        }
+        .topHeader{
+            background: #fff;
+            height: 115px;
+            position: relative;
+            padding-top: 25px;
+            box-sizing: border-box;
+        }
+        .logo{
+            width: 267px;
+            height: 52px;
+            margin: 0px auto 20px auto;
+            position: relative;
+            overflow: hidden;
+        }
+        .workInfo{
+            padding-right: 15%;
+        }
+        .workInfo .btn{
+            float: right;
+        }
+        .workInfo .topicTitle{
+            width: 80%;
+        }
+        .workInfo .title{
+            width: 80%;
+            color:#33cc99
+        }
+        .workInfo .description{
+            white-space: pre-wrap;
+        }
+        .workInfo .author{
+            margin-left: 50px;
+        }
+        .workInfo .description,.workInfo .topicTitle{
+            line-height: 32px;
+        }
+        .workInfo .workAttachment{
+            margin: 20px 0px;
+        }
+        .workInfo .workAttachment img{
+            width: 100%;
+        }
+        .workInfo .workAttachment .attaDescription{
+            text-align: center;
+        }
+        .detailPageInfo{
+            width: 80%;
+            margin: 40px auto;
+            padding:0px;
+        }
+    </style>
+</head>
+<body>
+
+<header class="topHeader">
+    <h1 class="logo">
+        <img src="http://localhost/lotusprizeWeb2014/images/app/logo.png">
+    </h1>
+</header>
+
+<div class="workInfo detailPageInfo" id="workInfo">
+    <div>
+        <span class="topicTitle">选题/Topic: ${artifact.topicName}</span>
+
+        <h2 class="title txtGreen">${artifact.title}</h2>
+        <span class="organization">${artifact.organization}</span>
+        <span class="author">${artifact.author}</span>
+    </div>
+    <p class="description">${artifact.description}</p>
+
+    #foreach( $int in $artifact.introduces)
+    <div class="workAttachment">
+        <img src="${int.image}">
+        <div class="attaDescription">
+            ${int.text}
+        </div>
+    </div>
+    #end
+
+</div>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    #include("/en/baseUrl.html")
+    <!--<base href="http://localhost/lotusprizeWeb2014/">-->
+
+    <link href="css/lib/jquery.toastmessage.css" rel="stylesheet" type="text/css">
+    <link href="css/src/common.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="js/lib/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/lib/juicer-min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.toastmessage.js"></script>
+    <script type="text/javascript" src="js/src/en/config.js"></script>
+    <script type="text/javascript" src="js/src/user/myWorkMgr.js"></script>
+    <script>
+        var href="s/user/artifact?_lang=en";
+        var stage="${stage}";
+    </script>
+</head>
+<body class="enBody">
+#parse("/en/header.html")
+<section class="main">
+    #parse("/user/en/userMenu.html")
+    <article class="content frontContent">
+        <header class="pageHeader">
+            <h3 class="pageTitle">Manage My Work</h3>
+        </header>
+        <!--<div class="row">
+            <a class="btn" href="s/topic/view?_lang=en">List of topics</a>
+        </div>-->
+        <table id="myWorkTable" class="dataTable frontTable">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Topic</th>
+                <th>Status</th>
+                #if($stage==2)
+                <th>Operation</th>
+                #end
+            </tr>
+            </thead>
+            <tbody>
+            #foreach( $artifact in $artifacts)
+            <tr>
+                <td >
+                    <a class="title check" title="${artifact.title}" href="s/user/artifact/show/${artifact.id}?_lang=en" target="_blank" class="check">${artifact.title}</a>
+                </td>
+                <td><span class="title" title="${artifact.topicName}">${artifact.topicName}</span></td>
+                <td>
+
+                    #if($stage<7)
+
+                        #if($artifact.status==1||$artifact.status==3)
+                            <span class="title status" title="${artifact.status}">
+                                ${artifact.status}
+                            </span>
+                        #else
+                            <span class="title status" title="2">
+                                2
+                            </span>
+                        #end
+
+                    #else
+                        #if($stage==8)
+                            #if($artifact.hatch==1)
+                                <span class="title">Incubation</span>
+                            #else
+                                <span class="title status hasPrize" title="${artifact.prize}">${artifact.prize}</span>
+                            #end
+                        #else
+                            <span class="title status hasPrize" title="${artifact.prize}">${artifact.prize}</span>
+                        #end
+                    #end
+                </td>
+                <td>
+                    #if($stage==2)
+                    <a href="s/user/artifact/update/${artifact.id}?_lang=en" class="edit">edit</a>&nbsp;
+                    <a href="${artifact.id}" class="delete">delete</a>
+                    #end
+
+                </td>
+            </tr>
+            #end
+
+
+            </tbody>
+        </table>
+    </article>
+</section>
+<!--显示作品-->
+<div class="popWindowContainer hidden" id="popWindowContainer">
+    <div id="popWindow" class="popWindow">
+        <div class="toolbar">
+            <a href="#" id="closePopWindow">Close</a>
+            #if($stage==2)
+            <div class="rightContainer txtRight">
+                <a href="#" id="detailEdit">Edit</a>
+            </div>
+            #end
+        </div>
+        <div class="workInfo detailPageInfo" id="workInfo">
+
+        </div>
+    </div>
+</div>
+
+#include("/en/footer.html")
+</body>
+</html>

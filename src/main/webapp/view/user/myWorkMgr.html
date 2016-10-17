@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    #include("/baseUrl.html")
+    <!--<base href="http://localhost/lotusprizeWeb2014/">-->
+
+    <link href="css/lib/jquery.toastmessage.css" rel="stylesheet" type="text/css">
+    <link href="css/src/common.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="js/lib/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/lib/juicer-min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.toastmessage.js"></script>
+    <script type="text/javascript" src="js/src/config.js"></script>
+    <script type="text/javascript" src="js/src/user/myWorkMgr.js"></script>
+    <script>
+        var href="s/user/artifact";
+        var stage="${stage}";
+    </script>
+</head>
+<body>
+
+#parse("/header.html")
+
+<section class="main">
+
+    #parse("/user/userMenu.html")
+
+    <article class="content frontContent">
+        <header class="pageHeader">
+            <h3 class="pageTitle">作品管理</h3>
+        </header>
+        <!--<div class="row">
+            <a class="btn" href="s/topic/view">选题/投稿</a>
+        </div>-->
+        <table id="myWorkTable" class="dataTable frontTable">
+            <thead>
+            <tr>
+                <th>作品名称</th>
+                <th>课题</th>
+                <th>状态</th>
+                #if($stage==2)
+                <th>操作</th>
+                #end
+            </tr>
+            </thead>
+            <tbody>
+
+            #foreach( $artifact in $artifacts)
+            <tr>
+                <td >
+                    <a class="title check" title="${artifact.title}" href="s/user/artifact/show/${artifact.id}" target="_blank" class="check">${artifact.title}</a>
+                </td>
+                <td><span class="title" title="${artifact.topicName}">${artifact.topicName}</span></td>
+                <td>
+                    #if($stage<7)
+                        #if($artifact.status==1||$artifact.status==3)
+                            <span class="title status" title="${artifact.status}">
+                                ${artifact.status}
+                            </span>
+                        #else
+                             <span class="title status" title="2">
+                                2
+                            </span>
+                        #end
+                    #else
+                        #if($stage==8)
+                            #if($artifact.hatch==1)
+                            <span class="title">孵化项目</span>
+                            #else
+                            <span class="title status hasPrize" title="${artifact.prize}">${artifact.prize}</span>
+                            #end
+                        #else
+                        <span class="title status hasPrize" title="${artifact.prize}">${artifact.prize}</span>
+                        #end
+                    #end
+                </td>
+                <td>
+                    #if($stage==2)
+                    <a href="s/user/artifact/update/${artifact.id}" class="edit">编辑</a>&nbsp;
+                    <a href="${artifact.id}" class="delete">删除</a>
+                    #end
+                </td>
+            </tr>
+            #end
+
+            </tbody>
+        </table>
+    </article>
+</section>
+
+<!--显示作品-->
+<div class="popWindowContainer hidden" id="popWindowContainer">
+<div id="popWindow" class="popWindow">
+    <div class="toolbar">
+        <a href="#" id="closePopWindow">关闭</a>
+        #if($stage==2)
+        <div class="rightContainer txtRight">
+            <a href="#" id="detailEdit">编辑</a>
+        </div>
+        #end
+    </div>
+
+    <div class="workInfo detailPageInfo" id="workInfo">
+
+    </div>
+</div>
+</div>
+
+#include("/footer.html")
+
+</body>
+</html>

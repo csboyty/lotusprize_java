@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    #include("/baseUrl.html")
+
+    <link href="css/lib/jquery.toastmessage.css" rel="stylesheet" type="text/css">
+    <link href="css/src/common.css" rel="stylesheet" type="text/css">
+    
+    <script type="text/javascript" src="js/lib/jquery-2.0.3.min.js"></script>
+
+    <script type="text/javascript" src="js/lib/jquery.form.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.toastmessage.js"></script>
+    <script type="text/javascript" src="js/src/config.js"></script>
+    <script type="text/javascript" src="js/src/register.js"></script>
+    <script>
+        var href="";
+    </script>
+</head>
+<body>
+#parse("/loginHeader.html")
+<section class="main">
+    #include("/loginMenu.html")
+    <article class="content frontContent">
+        <form action="s/account/register" method="post" id="registerForm">
+            <input type="hidden" name="registerToken" value=${registerToken}>
+            <header class="pageHeader">
+                <h3 class="pageTitle">注册</h3>
+            </header>
+            <div class="row">
+                <label class="labelTxt" for="registerEmail">邮箱</label>
+                <input class="txt" id="registerEmail" type="text" name="email" placeholder="请输入您的邮箱">
+            </div>
+            <div class="row">
+                <label class="labelTxt" for="registerFullName">全名</label>
+                <input class="txt" id="registerFullName" type="text" name="fullname" placeholder="请输入您的全名">
+
+            </div>
+            <!--<div class="row">
+                <label class="labelTxt" for="sex">性别</label>
+                <div id="sex" class="radios">
+                    <input  id="male" type="radio" value="male" name="gender" checked>
+                    <label for="male">男</label>
+                    <input  id="female" type="radio" value="female" name="gender">
+                    <label for="female">性别</label>
+                </div>
+            </div>-->
+            <div class="row">
+                <label class="labelTxt" for="registerOrg">单位/院校</label>
+                <input class="txt" id="registerOrg" type="text" name="organization" placeholder="请输入您的单位/院校">
+            </div>
+            <div class="row">
+                <label class="labelTxt" for="registerMobile">联系电话</label>
+                <input class="txt" id="registerMobile" type="text" name="mobile"
+                       placeholder="+86 0731-98989898/+86 13892932933">
+            </div>
+            <div class="row">
+                <label class="labelTxt" for="registerAddress">通讯地址</label>
+                <input class="txt" id="registerAddress" type="text" name="address" placeholder="请输入您的通讯地址">
+            </div>
+            <div class="row percentRow">
+                <hr>
+            </div>
+            <div class="row">
+                <label class="labelTxt" for="registerPwd">密码</label>
+                <input class="txt" id="registerPwd" name="password" type="password">
+            </div>
+            <div class="row">
+                <label class="labelTxt" for="registerConfirmPwd">确认密码</label>
+                <input class="txt" id="registerConfirmPwd" name="confirmPwd" type="password">
+            </div>
+            <div class="row checkRow">
+                <label class="labelTxt"></label>
+                <input type="checkbox" id="agreeInput" checked name="agree">
+                <label>本人同意本次比赛的<a id="agreement" href="view/agreement.html" target="_blank" class="txtGreen">协议</a></label>
+            </div>
+            <div class="row">
+                <input type="submit" value="注册" class="btn submitBtn">
+            </div>
+        </form>
+        <div class="row hidden" id="tip">
+            注册成功，请进入<a href="s/account/register" id="emailUrl" class="txtGreen">邮箱</a>进行账户激活！
+        </div>
+    </article>
+</section>
+
+<!--显示协议-->
+<div id="popWindow" class="popWindow positionFixed hidden">
+    <div class="toolbar">
+        <a href="#" id="closePopWindow">关闭</a>
+    </div>
+    <div class="agreementContent" id="agreementContent">
+
+    </div>
+    <input id="agree" type="button" class="btn agreementBtn" value="同意此协议">
+</div>
+
+#include("/footer.html")
+
+</body>
+</html>

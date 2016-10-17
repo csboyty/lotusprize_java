@@ -1,0 +1,39 @@
+<div class="wpHeader">
+    <h1 class="logo">
+        <a href="http://www.lotusprize.com/2014en/"></a>
+    </h1>
+    <ul class="links headerMenu">
+        <li class="linkItem icsidItem">
+            <a target="_blank"  href="http://www.icsid.org/events/events/calendar1307.htm">
+                <img src="images/app/iconIcsid.png">
+            </a>
+        </li>
+        <li class="linkItem cumulItem"><a target="_blank" href="http://www.cumulusassociation.org/component/content/1921-call-for-entries-the-4th-lotusprize-international-design-competition/152">
+            <img src="images/app/iconCumulus.png">
+        </a></li>
+    </ul>
+    <span class="deadLineContainer" href="http://www.lotusprize.com/2014/archives/710">
+        Days before deadline：<span id="deadLine" class="deadLine">0</span>
+    </span>
+    <div class="wpMenu">
+        <ul class="mainMenu headerMenu" id="menu">
+            <li><a href="http://www.lotusprize.com/2014en/">Home</a></li>
+            <li><a href="s/topic/view?_lang=en">Topic</a></li>
+            <li><a href="http://www.lotusprize.com/2014en/archives/category/rule">Regulations</a></li>
+            <li><a href="http://www.lotusprize.com/2014en/archives/category/judge">Jurors</a></li>
+            <li><a href="s/gallery?_lang=en">Awards</a></li>
+        </ul>
+        <ul class="wpOptMenu headerMenu">
+            #if($authInfo.authenticated)
+            <li><a href="s/${authInfo.roleName}?_lang=en">My Lotusprize</a></li>
+            <li><a href="s/logout">Logout</a></li>
+            #else
+            <li><a href="s/login?_lang=en">Login</a></li>
+            #end
+        </ul>
+        <ul class="langMenu headerMenu" id="langMenu">
+            <li><a href="http://www.lotusprize.com/2014/" >中文</a></li>
+            <li><a href="http://www.lotusprize.com/2014en/" class="active">English</a></li>
+        </ul>
+    </div>
+</div>

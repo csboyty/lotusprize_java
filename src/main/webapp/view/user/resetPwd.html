@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    #include("/baseUrl.html")
+    <!--<base href="http://localhost/lotusprizeV2Web/">-->
+
+    <link href="css/lib/jquery.toastmessage.css" rel="stylesheet" type="text/css">
+    <link href="css/src/common.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="js/lib/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.form.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.toastmessage.js"></script>
+    <script type="text/javascript" src="js/src/config.js"></script>
+    <script type="text/javascript" src="js/src/user/resetPwd.js"></script>
+    <script type="text/javascript">
+        var href="s/account/password";
+    </script>
+</head>
+<body>
+#parse("/header.html")
+<section class="main">
+    #parse("/user/userMenu.html")
+    <article class="content frontContent">
+        <header class="pageHeader">
+            <h3 class="pageTitle">修改密码</h3>
+        </header>
+        <form action="s/account/password" method="post" id="resetPwdForm">
+
+            <div class="row">
+                <label class="labelTxt" for="password">原密码</label>
+                <input class="txt" id="password"  name="oldPassword" type="password">
+            </div>
+            <!--<div class="row percentRow">
+                <hr>
+            </div>-->
+            <div class="row">
+                <label class="labelTxt" for="newPassword">密码</label>
+                <input class="txt" id="newPassword" name="newPassword" type="password" >
+            </div>
+            <div class="row">
+                <label class="labelTxt" for="newConfirmPwd">确认密码</label>
+                <input class="txt" id="newConfirmPwd"  name="newConfirmPwd" type="password">
+            </div>
+            <div class="row">
+                <input type="submit" value="保存" class="btn submitBtn">
+            </div>
+        </form>
+    </article>
+</section>
+
+#include("/footer.html")
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    #include("/en/baseUrl.html")
+    <!--<base href="http://localhost/lotusprizeWeb2014/">-->
+
+    <link href="css/src/common.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="js/lib/jquery-1.7.1.min.js"></script>
+    <!--[if lte IE 9]>
+    <script src="js/lib/html5.js"></script>
+    <![endif]-->
+    <script type="text/javascript" src="js/lib/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="js/src/en/config.js"></script>
+    <script type="text/javascript" src="js/src/login.js"></script>
+    <script>
+        var href="";
+    </script>
+</head>
+<body class="enBody">
+
+#parse("/en/loginHeader.html")
+
+<section class="main">
+
+    #include("/en/loginMenu.html")
+
+    <article class="content frontContent">
+        <header class="pageHeader">
+            <h3 class="pageTitle">Login</h3>
+        </header>
+        <form action="s/login?_lang=en" method="post" id="loginForm" class="login">
+            <input type="hidden" name="loginToken" value="$lotusprizeTool.loginToken()">
+            <div class="row">
+                <p class="hasLeftMargin txtGreen">Please use chrome30+、firefox26+、safari6+、ie9+</p>
+            </div>
+
+            <div class="row">
+                <label class="labelTxt" for="loginEmail">Email</label>
+                <input class="txt" id="loginEmail" type="text" name="username" placeholder="Please enter your email">
+            </div>
+            <div class="row">
+                <label class="labelTxt" for="loginPwd">Password</label>
+                <input class="txt" id="loginPwd" name="password" type="password">
+            </div>
+            <!--<div class="row">
+                <label class="labelTxt" for="captcha">Captcha</label>
+                <div class="captchaContent">
+                    <a href="#" class="captchaRefresh" id="captchaRefresh">
+                        <img class="captcha" src="s/captcha.jpg">
+                        <span class="captchaRefreshText">Refresh Captcha</span>
+                    </a>
+                    <input id="captcha" name="captcha" class="txt captchaTxt" type="text" placeholder="Enter the captcha">
+                </div>
+            </div>-->
+
+            <div class="row">
+                <input type="submit" value="Login" class="btn submitBtn">
+            </div>
+            <div class="row">
+                <p class="hasLeftMargin percentWTip">
+                    No account？<a href="s/account/register?_lang=en" class="register">Click me</a>
+                    <a href="s/account/forgetPassword?_lang=en" class="forgetPwd">Forget password</a>
+                </p>
+            </div>
+             #if($errorCode=="timeout")
+             <div class="row">
+                 <span class="txtRed hasLeftMargin">Login is timeout.Please refresh the page to login again！</span>
+             </div>
+             #elseif($errorCode=="captcha_unmatch")
+             <div class="row">
+                 <span class="txtRed hasLeftMargin">Verification code is error！</span>
+             </div>
+             #elseif($errorCode=="account_inactive")
+             <div class="row">
+                 <span class="txtRed hasLeftMargin">Account is not active！</span>
+             </div>
+             #elseif($errorCode=="account_authenticate")
+             <div class="row">
+                 <span class="txtRed hasLeftMargin">The user name or password is error！</span>
+             </div>
+             #end
+        </form>
+    </article>
+
+</section>
+#include("/en/footer.html")
+</body>
+</html>

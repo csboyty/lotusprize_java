@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    #include("/baseUrl.html")
+    <!--<base href="http://localhost/lotusprizeWeb2014/">-->
+
+    <link type="text/css" rel="stylesheet" href="css/lib/jquery.toastmessage.css">
+    <link type="text/css" rel="stylesheet" href="css/src/common.css">
+    <link type="text/css" rel="stylesheet" href="css/src/admin/topicCreate.css">
+    <script src="js/lib/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.toastmessage.js"></script>
+    <script type="text/javascript" src="js/lib/plupload.js"></script>
+    <script type="text/javascript" src="js/lib/plupload.html5.js"></script>
+    <script type="text/javascript" src="js/lib/plupload.flash.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.form.js"></script>
+    <script type="text/javascript" src="js/lib/juicer-min.js"></script>
+    <script type="text/javascript" src="js/src/config.js"></script>
+    <script type="text/javascript" src="js/src/admin/topicCreate.js"></script>
+    <script type="text/javascript">
+        var href="s/topic/mgr";
+        var lang='$!{lang}';
+        var topicId='$!{topic.id}';
+        /*var medias='$lotusprizeTool.json($!{topic.topicIntroduces})';*/
+    </script>
+</head>
+<body>
+
+<!--模板-->
+<script type="text/template" id="attaTpl">
+    <a href="#" class="attachment" title="${filename}"><input type="hidden" value="${filepath}" name="attachment">${filename}</a>
+</script>
+<script type="text/template" id="videoTpl">
+    <a href="#" class="attachment"><input type="hidden" value="${filepath}" name="video">${filename}</a>
+</script>
+<script type="text/template" id="mediaTpl">
+    <li>
+        <a class="file" href="${key}">
+            <span draggable="true" class="name" title="${filename}">${filename}</span>
+            <span class="delete">删除</span>
+        </a>
+    </li>
+</script>
+
+<script type="text/template" id="previewTpl">
+    <aside class="leftAside">
+        <img class="logo" src="${topicLogo}">
+        <span class="companyName" title="${topicCompanyName}">${topicCompanyName}</span>
+        <p class="txtGreen reward">&yen;${topicMoney}</p>
+        {@if topicOtherAward}
+        <label class="txtGreen">额外奖励</label>
+        <p class="addition">${topicOtherAward}</p>
+        {@/if}
+
+
+        {@if topicAttDown}
+        <a class="txtGreen" href="${topicAttDown}" target="_blank"  class="download">附件下载</a>
+        <br>
+        {@/if}
+        {@if topicVideo}
+        <a class="txtGreen" href="${topicVideo}" target="_blank"  class="download">视频</a>
+        <br>
+        {@/if}
+
+    </aside>
+    <article class="articleContent">
+
+        <h1 class="txtGreen title">${topicTitle}</h1>
+        <p>${topicCategory}</p>
+        <p class="description">${topicDescription}</p>
+
+        {@each medias as media}
+            <div class="descriptionImg">
+                <img src="${media.image}">
+                {@if media.text}
+                <div class="imgInfo">
+                    <p class="imgInfoContent">$${media.text}</p>
+                    <span class="showMore">^</span>
+                </div>
+                {@/if}
+            </div>
+        {@/each}
+
+
+        <div class="row txtRight">
+            <input type="button" id="step3ToStep2" class="btn" value="上一步">
+            <input type="submit" id="submitBtn" class="btn" value="提交">
+        </div>
+    </article>
+</script>
+
+#parse("/header.html")
+<section class="main">
+    #include("/admin/adminMenu.html")
+
+    <article class="content">
+        <header class="pageHeader">
+            <ul class="step" id="step">
+                <li class="active">1.基本信息</li>
+                <li >2.图片</li>
+                <li>3.预览提交</li>
+            </ul>
+        </header>
+        <form method="post" action="s/topic/createOrUpdate" id="topicCreateForm">
+            <input type="hidden" name="id" value="$!{topic.id}">
+            <input type="hidden" name="topicSettingId" value="1">
+            <section id="step1" class="stepPanel">
+                <div class="row txtRight">
+                #if($lang)
+
+                    #if($lang=="zh")
+                    <a href="s/topic/update/${topic.id}?lang=zh" class="active">中文</a>
+                    &nbsp;
+                    <a href="s/topic/update/${topic.id}?lang=en">英文</a>
+                    <input type="hidden" name="lang" value="zh">
+                    #else
+                    <a href="s/topic/update/${topic.id}?lang=zh">中文</a>
+                    &nbsp;
+                    <a href="s/topic/update/${topic.id}?lang=en" class="active">英文</a>
+                    <input type="hidden" name="lang" value="en">
+                    #end
+
+                #else
+                <input type="hidden" name="lang" value="zh">
+                #end
+                </div>
+
+                <div class="row">
+                    <label class="labelTxt" for="topicCategory">课题类型：</label>
+                    #set($categories=[
+                    {"text":"A1 数字化制造与设计创新","value":"1"},
+                    {"text":"A2 智能产品与服务设计创新","value":"2"},
+                    {"text":"B 社会化服务设计创新","value":"3"}
+                    ])
+
+                    #if($topic.category)
+                        #if($lang=="zh")
+                        <select id="topicCategory" name="category" class="txt txtWidthLimit200">
+                            #foreach($ca in $categories)
+                                #if($ca.value==$topic.category)
+                                <option value="${ca.value}" selected>${ca.text}</option>
+                                #else
+                                <option value="${ca.value}">${ca.text}</option>
+                                #end
+                            #end
+                        </select>
+                        #else
+                            <label class="labelTxt">
+                                #if($topic.category=="1")
+                                A1 数字化制造与设计创新
+                                #elseif($topic.category=="2")
+                                A2 智能产品与服务设计创新
+                                #elseif($topic.category=="3")
+                                B 社会化服务设计创新
+                                #end
+                            </label>
+                            <input id="topicCategory" name="category" type="hidden" value="${topic.category}">
+                        #end
+
+                    #else
+                    <select id="topicCategory" name="category" class="txt txtWidthLimit200">
+                        #foreach($ca in $categories)
+                        <option value="${ca.value}">${ca.text}</option>
+                        #end
+                    </select>
+                    #end
+
+                </div>
+                <div class="row">
+                    <label class="labelTxt" for="topicCorpName">企业名称：</label>
+
+                    #if($topic.corpName)
+                    <input type="text" class="txt"  maxlength="60"
+                           required id="topicCorpName" name="corpName" value="$escapeTool.html(${topic.corpName})">
+                    #else
+                    <input type="text" class="txt"  maxlength="60"
+                           required id="topicCorpName" name="corpName" >
+                    #end
+
+
+                    <span class="requiredFlag">*</span>
+                </div>
+                <div class="row">
+                    <label class="labelTxt" for="ownAccount">归属账号：</label>
+                    #if($topic.ownAccountId)
+                        #if($lang=="zh")
+                        <select id="ownAccount" name="ownAccountId" class="txt txtWidthLimit200">
+                            #foreach($tp in $topicManagers)
+                                #if($tp.id==$topic.ownAccountId)
+                                <option value="${tp.id}" selected>${tp.organization}</option>
+                                #else
+                                <option value="${tp.id}">${tp.organization}</option>
+                                #end
+                            #end
+                        </select>
+                        #else
+                        <label class="labelTxt">
+                            #foreach($tp in $topicManagers)
+                                #if($tp.id==$topic.ownAccountId)
+                                    $tp.organization
+                                #end
+                            #end
+                        </label>
+                        <input id="ownAccount" name="ownAccountId" type="hidden" value="${topic.ownAccountId}">
+                        #end
+
+                    #else
+                    <select id="ownAccount" name="ownAccountId" class="txt txtWidthLimit200">
+                        #foreach($tp in $topicManagers)
+                            #if($tp.id==$topic.ownAccountId)
+                            <option value="${tp.id}" selected>${tp.organization}</option>
+                            #else
+                            <option value="${tp.id}">${tp.organization}</option>
+                            #end
+                        #end
+                    </select>
+                    #end
+                </div>
+                <div class="row">
+                    <label class="labelTxt" for="topicTitle">课题标题：</label>
+                    #if($topic.name)
+                    <input type="text" class="txt"  maxlength="128" required id="topicTitle" name="name" value="$escapeTool.html(${topic.name})">
+                    #else
+                    <input type="text" class="txt"  maxlength="128" required id="topicTitle" name="name">
+                    #end
+
+                    <span class="requiredFlag">*</span>
+                </div>
+
+                <div class="row">
+                    <label class="labelTxt" for="topicDescription">课题介绍：</label>
+                    <div class="rowContent">
+                        <textarea class="txtarea txt" name="description" id="topicDescription" required maxlength="2048">$!{topic.description}</textarea>
+                        <span class="requiredFlag">*</span>
+                        <div>(2048字以内)</div>
+                    </div>
+
+                </div>
+
+                <div class="row" id="attachmentRow">
+                    <label class="labelTxt">附件：</label>
+                    <div id="uploadAttachmentContainer" class="asInBlock">
+                        <input type="button" class="btn" id="uploadAttachment" value="上传">
+                    </div>
+                    <span class="tips">(zip文件格式,至多一个，最大200m)</span>
+
+                    #if($topic.attachment)
+                        <a href="#" class="attachment" title="$lotusprizeTool.getFilename(${topic.attachment})">
+                            <input type="hidden" value="${topic.attachment}" name="attachment">
+                            $lotusprizeTool.getFilename(${topic.attachment})</a>
+                    #end
+                    <!--<a href="#" class="file">theFirstFile<input type="hidden" name="attachment"></a>-->
+
+                </div>
+                <div class="row" id="videoRow">
+                    <label class="labelTxt">视频：</label>
+                    <div id="uploadVideoContainer" class="asInBlock">
+                        <input type="button" class="btn" id="uploadVideo" value="上传">
+                    </div>
+                    <span class="tips">(mp4文件格式,至多一个，最大300m)</span>
+
+                    #if($topic.video)
+                    <a href="#" class="attachment">
+                        <input type="hidden" value="${topic.video}" name="video">
+                        $lotusprizeTool.getFilename(${topic.video})</a>
+                    #end
+                    <!--<a href="#" class="file">theFirstFile<input type="hidden" name="attachment"></a>-->
+
+                </div>
+                <div class="row">
+                    <label class="labelTxt">封面图：</label>
+                    <div class="rowContent">
+                        #if($topic.profile)
+                            #set($profile=$topic.profile)
+                        #else
+                            #set($profile="images/app/defaultThumb.jpg")
+                        #end
+                        <img src="${profile}" width="300px" height="200px" id="topicThumbShow">
+                        <span class="requiredFlag">*</span>
+                        <span class="tips">(jpg/png,300*200,2M以内)</span>
+                        <input type="hidden" id="topicThumb" name="profile" required value="$!{topic.profile}">
+                        <div id="uploadThumbContainer">
+                            <input type="button" id="uploadThumb" class="btn" value="上传">
+                        </div>
+
+                    </div>
+                </div>
+                <!--<div class="row">
+                    <label class="labelTxt" for="topicCompanyName">企业名称：</label>
+                    <input type="text" class="txt"  maxlength="60"
+                           id="topicCompanyName" required name="corpName" value="$!{topic.corpName}">
+                    <span class="requiredFlag">*</span>
+                </div>-->
+
+                <div class="row">
+                    <label class="labelTxt">企业LOGO：</label>
+                    <div class="rowContent">
+                        #if($topic.corpLogo)
+                            #set($logo=$topic.corpLogo)
+                        #else
+                            #set($logo="images/app/defaultThumb.jpg")
+                        #end
+                        <img src="$logo" class="squareImg" id="topicLogoImg">
+                        <span class="requiredFlag">*</span>
+                        <span class="tips">(jpg/png,1:1,2M以内)</span>
+                        <input type="hidden" id="topicLogo" name="corpLogo" required value="$!{topic.corpLogo}">
+                        <div id="uploadLogoContainer">
+                            <input type="button" id="uploadLogo" class="btn" value="上传">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="labelTxt" for="topicMoney">金额：</label>
+                    <input type="text" class="txt txtWidthLimit200" pattern="[\d]+" title="例如：30000"
+                           required id="topicMoney" name="reward" value="$!{topic.reward}">
+                    <span class="requiredFlag">*</span>
+                    <span class="tips">元</span>
+                </div>
+                <div class="row">
+                    <label class="labelTxt" for="topicOtherAward">奖励方式：</label>
+                    <textarea type="text" class="txt txtarea" id="topicOtherAward" maxlength="500"
+                           name="addition">$!{topic.addition}</textarea>
+                </div>
+
+                <div class="row txtRight">
+                    <input type="submit" value="下一步" id="step1ToStep2" class="btn">
+                </div>
+            </section>
+
+            <section id="step2" class="stepPanel hidden">
+                <header>
+                    <div id="uploadMediaContainer">
+                        <input type="button" id="uploadMedia" class="btn" value="上传">
+                    </div>
+                    <p>仅限10M以内的jpg、png</p>
+                </header>
+                <ul class="mediaList" id="mediaList">
+
+                    #foreach( $int in $topic.topicIntroduces)
+                        <li>
+                            <a class="file" href="${int.pos}">
+                                <span class="name" draggable="true" title="dfasdfadfaf">$lotusprizeTool.getFilename(${int.image})</span>
+                                <span class="delete">删除</span>
+                            </a>
+                        </li>
+                    #end
+
+                </ul>
+                <div class="mediaInfoPanel">
+                    <div class="row">
+                        <label class="labelTxt"></label>
+                        <img src="images/app/defaultImg.jpg" id="mediaShow">
+                    </div>
+                    <div class="row">
+                        <label class="labelTxt">说明</label>
+                        <div class="rowContent">
+                            <textarea id="mediaDescription" class="txt txtarea" maxlength="1000"></textarea>
+                            <span class="tips">可选</span>
+                            <div>限1000字</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="txtRight">
+                    <input type="button" value="上一步" id="step2ToStep1" class="btn">
+                    <input type="button" value="下一步" id="step2ToStep3" class="btn">
+                </div>
+            </section>
+
+            <section id="step3" class="stepPanel hidden">
+                <!--<aside class="leftAside">
+                    <img class="logo" src="${topic.corpLogo}">
+                    <span class="companyName" title="${topic.corpName}">${topic.corpName}</span>
+                    <p class="txtGreen reward">&yen;${topic.reward}</p>
+                    <label class="txtGreen">额外奖励</label>
+                    <p class="addition">${topic.addition}djfkajdkf剪短发就困了就付款就阿迪会计法额空间发啊江东父老飞
+                        卡阿克对法拉克就都发到饭局啊辽阔的就发到看</p>
+                    <a class="txtGreen" href="${topic.attachment}"  class="download">附件下载</a>
+                </aside>
+                <article class="articleContent">
+
+                    <h1 class="txtGreen title">${topic.name}</h1>
+                    <p>${topic.category}</p>
+                    <p class="description">${topic.description}</p>
+
+                    <div class="descriptionImg">
+                        <img src="images/app/defaultImg.jpg">
+                        <div class="imgInfo">
+                            <p class="imgInfoContent">djfkajdkf剪短发就困了就付款就阿迪会计法额空间发啊江东父老飞
+                                卡阿克对法拉克就都发到饭局啊辽阔的就发到看
+                                djfkajdkf剪短发就困了就付款就阿迪会计法额空间发啊江东父老飞
+                                卡阿克对法拉克就都发到饭局啊辽阔的就发到看
+                                djfkajdkf剪短发就困了就付款就阿迪会计法额空间发啊江东父老飞
+                                卡阿克对法拉克就都发到饭局啊辽阔的就发到看
+                            </p>
+                            <span class="showMore">箭头</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="txtGreen">企业附件</label>
+                        <a href="${topic.attachment}"  class="download">下载</a>
+                    </div>
+                </article>-->
+            </section>
+        </form>
+    </article>
+</section>
+
+#include("/footer.html")
+
+</body>
+</html>

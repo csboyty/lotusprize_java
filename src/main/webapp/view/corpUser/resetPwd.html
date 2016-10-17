@@ -1,0 +1,28 @@
+<div id="popWindowPwd" class="popWindow hidden">
+    <div class="toolbar">
+        <a href="#" id="closePopWindowPwd">关闭</a>
+
+    </div>
+    <div class="detailPageInfo" id="pwdPanel">
+        <form action="s/account/password" method="post" id="resetPwdForm">
+            <div class="row">
+                <label class="labelTxt" for="password">原密码</label>
+                <input class="txt" id="password"  name="oldPassword" type="password">
+            </div>
+            <!--<div class="row percentRow">
+                <hr>
+            </div>-->
+            <div class="row">
+                <label class="labelTxt" for="newPassword">密码</label>
+                <input class="txt" id="newPassword" name="newPassword" type="password" >
+            </div>
+            <div class="row">
+                <label class="labelTxt" for="newConfirmPwd">确认密码</label>
+                <input class="txt" id="newConfirmPwd"  name="newConfirmPwd" type="password">
+            </div>
+            <div class="row">
+                <input type="submit" value="保存" class="btn submitBtn">
+            </div>
+        </form>
+    </div>
+</div>

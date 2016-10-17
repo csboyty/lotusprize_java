@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    #include("/baseUrl.html")
+    <!--<base href="http://localhost/lotusprizeV2Web/">-->
+
+    <link href="css/lib/jquery.toastmessage.css" rel="stylesheet" type="text/css">
+    <link href="css/src/common.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="js/lib/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.form.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.toastmessage.js"></script>
+    <script type="text/javascript" src="js/src/config.js"></script>
+    <script type="text/javascript" src="js/src/user/changeProfile.js"></script>
+    <script type="text/javascript">
+        var href="s/account/info";
+    </script>
+
+</head>
+<body>
+#parse("/header.html")
+<section class="main">
+    #parse("/user/userMenu.html")
+    <article class="content frontContent">
+        <header class="pageHeader">
+            <h3 class="pageTitle">修改资料</h3>
+        </header>
+        <form action="s/account/info" method="post" id="changeProfileForm">
+
+            <div class="row">
+                <label class="labelTxt" >邮箱</label>
+                <label class="labelTxt txtGray" >${account.email}</label>
+            </div>
+            <div class="row">
+                <label class="labelTxt" for="registerFullName">全名</label>
+                <input class="txt" id="registerFullName"
+                       type="text" name="fullname" value="$escapeTool.html(${account.fullname})" placeholder="请输入您的全名">
+                <!--<span class="requiredFlag">*</span>-->
+            </div>
+            <div class="row">
+                <label class="labelTxt" for="sex">性别</label>
+                <div id="sex" class="radios">
+                    #if($account.accountProfile.gender=="2")
+                        <input  id="male" type="radio" name="gender" value="1" >
+                        <label for="male">男</label>
+                        <input  id="female" type="radio" name="gender" value="2" checked>
+                        <label for="female">女</label>
+                    #else
+                        <input  id="male" type="radio" name="gender" value="1" checked>
+                        <label for="male">男</label>
+                        <input  id="female" type="radio" name="gender" value="2" >
+                        <label for="female">女</label>
+                    #end
+                </div>
+            </div>
+            <div class="row">
+                <label class="labelTxt" for="registerMobile">联系电话</label>
+                <input class="txt" id="registerMobile"
+                       type="text" name="mobile" value="$escapeTool.html(${account.mobile})"
+                       placeholder="+86 0731-98989898/+86 13892932933">
+                <!--<span class="requiredFlag">*</span>-->
+            </div>
+            <div class="row">
+                <label class="labelTxt" for="registerAddress">通讯地址</label>
+                <input class="txt" id="registerAddress" value="$escapeTool.html(${account.address})" type="text"
+                       name="address" placeholder="请输入您的通讯地址">
+                <!--<span class="requiredFlag">*</span>-->
+            </div>
+            <div class="row">
+                <label class="labelTxt" for="registerOrg">单位/院校</label>
+                #if($account.accountProfile.organization)
+                <input class="txt" id="registerOrg" value="$escapeTool.html(${account.accountProfile.organization})" type="text"
+                       name="organization" placeholder="请输入您的单位/院校">
+                #else
+                <input class="txt" id="registerOrg" type="text"
+                       name="organization" placeholder="请输入您的单位/院校">
+                #end
+
+            </div>
+            <div class="row">
+                <input type="submit" value="保存" class="btn submitBtn">
+            </div>
+        </form>
+    </article>
+</section>
+
+#include("/footer.html")
+</body>
+</html>

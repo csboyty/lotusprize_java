@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    #include("/baseUrl.html")
+
+
+    <link href="css/src/common.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="js/lib/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.validate.min.js"></script>
+    <!--[if lte IE 9]>
+    <script src="js/lib/html5.js"></script>
+    <![endif]-->
+    <script type="text/javascript" src="js/src/config.js"></script>
+    <script type="text/javascript" src="js/src/login.js"></script>
+    <script>
+        var href="";
+    </script>
+</head>
+<body>
+
+#parse("/loginHeader.html")
+
+
+<section class="main">
+
+    #include("/loginMenu.html")
+
+    <article class="content frontContent">
+        <header class="pageHeader">
+            <h3 class="pageTitle">登录</h3>
+        </header>
+        <form action="s/login" method="post" id="loginForm" class="login">
+            <input type="hidden" name="loginToken" value="$lotusprizeTool.loginToken()">
+            <div class="row">
+                <p class="hasLeftMargin txtGreen">请使用chrome30+、firefox26+、safari6+、ie9+</p>
+            </div>
+
+            <div class="row">
+                <label class="labelTxt" for="loginEmail">邮箱</label>
+                <input class="txt" id="loginEmail" type="text"
+                       name="username" placeholder="请输入您的邮箱">
+            </div>
+            <div class="row">
+                <label class="labelTxt" for="loginPwd">密码</label>
+                <input class="txt" id="loginPwd" name="password" type="password">
+            </div>
+            <!--<div class="row">
+                <label class="labelTxt" for="captcha">验证码</label>
+                <div class="captchaContent">
+                    <a href="#" class="captchaRefresh" id="captchaRefresh">
+                        <img class="captcha" src="s/captcha.jpg">
+                        <span class="captchaRefreshText">看不清换一张</span>
+                    </a>
+                    <input id="captcha" name="captcha" class="txt captchaTxt" type="text" placeholder="请输入左侧验证码">
+                </div>
+            </div>-->
+
+            <div class="row">
+                <input type="submit" value="登 录" class="btn submitBtn">
+            </div>
+            <div class="row">
+                <p class="hasLeftMargin percentWTip">
+                    没有账户？<a href="s/account/register" class="register">点击这里</a>
+                    <a href="s/account/forgetPassword" class="forgetPwd">忘记密码</a>
+                </p>
+            </div>
+             #if($errorCode=="timeout")
+             <div class="row">
+                 <span class="txtRed hasLeftMargin">登录超时，请刷新页面重新登录！</span>
+             </div>
+             #elseif($errorCode=="captcha_unmatch")
+             <div class="row">
+                 <span class="txtRed hasLeftMargin">验证码错误！</span>
+             </div>
+             #elseif($errorCode=="account_inactive")
+             <div class="row">
+                 <span class="txtRed hasLeftMargin">账户没有激活！</span>
+             </div>
+             #elseif($errorCode=="account_authenticate")
+             <div class="row">
+                 <span class="txtRed hasLeftMargin">用户名或者密码错误！</span>
+             </div>
+             #end
+        </form>
+    </article>
+
+</section>
+#include("/footer.html")
+</body>
+</html>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd"
+       default-lazy-init="true">
+
+    <description>Shiro安全配置</description>
+
+
+    <!-- Spring AOP auto-proxy creation (required to support Shiro annotations) -->
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+
+    <!-- 身份验证缓存  -->
+    <bean id="authenticationCache" class="com.zhongyi.lotusprize.auth.cache.ShiroRedisAuthenticationCache">
+        <constructor-arg index="0" value="lp:authenticationCache"/>
+        <constructor-arg index="1" ref="jedisPool"/>
+    </bean>
+
+    <!-- 权限验证缓存 -->
+    <bean id="authorizationCache" class="com.zhongyi.lotusprize.auth.cache.ShiroRedisAuthorizationCache">
+        <constructor-arg index="0" value="lp:authorizationCache"/>
+        <constructor-arg index="1" ref="jedisPool"/>
+    </bean>
+
+
+    <bean id="activeSessionCache" class="com.zhongyi.lotusprize.auth.cache.ShiroRedisSessionCache">
+        <constructor-arg index="0" value="lp:activeSessions"/>
+        <constructor-arg index="1" value="1800"/>
+        <constructor-arg index="2" ref="jedisPool"/>
+    </bean>
+
+    <bean id="usernameAndPasswordRealm" class="com.zhongyi.lotusprize.auth.UsernameAndPasswordRealm">
+      	<property name="authenticationCache" ref="authenticationCache"/>
+        <property name="authorizationCache" ref="authorizationCache"/>
+     	<property name="authenticationCachingEnabled" value="true"/>
+        <property name="authorizationCachingEnabled" value="true"/>
+    </bean>
+
+    
+  <!--   
+  	<bean id="authenticator" class="org.apache.shiro.authc.pam.ModularRealmAuthenticator">
+    	 <property name="realms">
+            <util:list>
+                <ref bean="usernameAndPasswordRealm"/>
+            </util:list>
+        </property>
+    	<property name="authenticationStrategy">
+    		<bean class="com.zhongyi.lotusprize.auth.LotusprizeAuthenticationStrategy" />
+    	</property>
+    </bean>
+   -->
+    
+   <!--  <bean id="authorizer" class="org.apache.shiro.authz.ModularRealmAuthorizer">
+    	 <property name="realms">
+            <util:list>
+                <ref bean="usernameAndPasswordRealm"/>
+            </util:list>
+        </property>
+    </bean> -->
+    
+    
+
+
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <!-- <property name="authenticator" ref="authenticator"/> -->
+    	<!-- <property name="authorizer" ref="authorizer"/> -->
+     	<property name="realms">
+            <util:list>
+                <ref bean="usernameAndPasswordRealm"/>
+            </util:list>
+        </property>
+        <property name="sessionManager" ref="sessionManager"/>
+    </bean>
+
+
+    <bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+        <property name="sessionValidationSchedulerEnabled" value="false"/>
+        <property name="sessionDAO" ref="sessionDAO"/>
+        <property name="globalSessionTimeout" value="1800000"/>
+    </bean>
+
+    <bean id="sessionDAO" class="com.zhongyi.lotusprize.auth.cache.ShiroRedisCacheSessionDAO">
+        <property name="activeSessionsCache" ref="activeSessionCache"/>
+    </bean>
+
+
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="loginUrl" value="/s/login"/>
+        <property name="unauthorizedUrl" value="/403.html"/>
+        <property name="securityManager" ref="securityManager"/>
+        <!-- The 'filters' property is usually not necessary unless performing an override, which we
+             want to do here (make authc point to a PassthruAuthenticationFilter instead of the
+             default FormAuthenticationFilter: -->
+        <property name="filters">
+            <util:map>
+            	<entry key="logout">
+            		<bean class="com.zhongyi.lotusprize.auth.CompatibleAjaxLogoutFilter">
+            			<property name="redirectUrl" value="http://www.lotusprize.com/2014"/>
+            		</bean>
+            	</entry>
+                <entry key="authc">
+                    <bean class="com.zhongyi.lotusprize.auth.CompatibleAjaxPassThruAuthenticationFilter"/>
+                </entry>
+                <entry key="anyofroles">
+                	<bean class="com.zhongyi.lotusprize.auth.AnyOfRolesAuthorizationFilter" />
+                </entry>
+            </util:map>
+        </property>
+        <property name="filterChainDefinitions">
+            <value>
+                /s/captcha.jpg = anon
+                /s/404=anon
+                /= anon
+                /s/authenticateStatus=anon
+                /s/account/info=authc
+                /s/account/password=authc
+                /s/account/**=anon
+                /s/user/artifact/show/**=anon
+                /s/user/artifact/pdf/**=anon
+                /s/topic/view/**=anon
+                /s/topic/list=anon
+                /s/topic/artifact/**=anon
+                /s/gallery/**=anon
+                /s/topic/mgr = authc,roles["admin"]
+                /s/topicManager/**=authc,roles["topicManager"]
+                /s/admin/** = authc,roles["admin"]
+                /s/expert/topic/artifact/doScore=authc,anyofroles["topicManager,expert"]
+                /s/expert/** = authc,anyofroles["topicManager,expert"]
+                /s/logout = logout
+                /s/** = authc
+            </value>
+        </property>
+    </bean>
+    
+    <bean id="shiroRedisSessionFilter" class="com.zhongyi.lotusprize.auth.ShiroRedisSessionFilter" />
+
+    <!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+</beans>

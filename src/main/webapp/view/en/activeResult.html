@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    #include("/en/baseUrl.html")
+    <!--<base href="http://localhost/lotusprizeWeb2014/">-->
+
+    #if($errorCode=="account_active_email_token_not_match")
+        <meta http-equiv="refresh" content="5;url=http://192.168.2.167:9911/lotusprize/s/account/register?_lang=en">
+    #else
+         <meta http-equiv="refresh" content="5;url=http://192.168.2.167:9911/lotusprize/s/login?_lang=en">
+    #end
+
+    <link href="css/src/common.css" type="text/css" rel="stylesheet">
+</head>
+<body class="enBody">
+#parse("/en/loginHeader.html")
+    <div class="content messageContent">
+        #if($errorCode=="account_active_email_token_not_match")
+            Email has become invalid. Activation failed. Jump automatically after 5 seconds to
+        <a href="s/register?_lang=en" class="txtGreen">registered</a>.
+        #else
+            Email activation succeed! Jump automatically after 5 seconds to
+        <a href="s/login?_lang=en" class="txtGreen">login</a>.
+        #end
+    </div>
+</body>
+</html>

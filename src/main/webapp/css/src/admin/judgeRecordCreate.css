@@ -1,0 +1,21 @@
+.pageHeader{
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+.tableContainer{
+    width: 100%;
+    margin: 10px auto;
+}
+.tableContainer .childTableContainer{
+    max-height: 300px;
+    overflow: auto;
+    margin-bottom: 30px;
+}
+.dataTable .checkTd{
+    width: 8%;
+}
+.dataTable .titleTd{
+    width: 50%;
+}
+

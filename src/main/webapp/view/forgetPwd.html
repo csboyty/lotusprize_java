@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    #include("/baseUrl.html")
+    <!--<base href="http://localhost/lotusprizeV2Web/">-->
+
+    <link href="css/src/common.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="js/lib/jquery-2.0.3.min.js"></script>
+    <!--[if lte IE 9]>
+    <script src="js/lib/html5.js"></script>
+    <![endif]-->
+    <script type="text/javascript" src="js/lib/jquery.form.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="js/src/config.js"></script>
+    <script type="text/javascript" src="js/src/forgetPwd.js"></script>
+    <script type="text/javascript">
+        var href="";
+    </script>
+</head>
+<body>
+#parse("/loginHeader.html")
+<section class="main">
+    #include("/loginMenu.html")
+    <article class="content frontContent">
+        <header class="pageHeader">
+            <h3 class="pageTitle">忘记密码</h3>
+        </header>
+        <form action="s/account/forgetPassword" method="post" id="forgetPwdForm">
+            <input type="hidden" name="forgetPasswordToken" value=${forgetPasswordToken}>
+            <div class="row">
+                <label class="labelTxt" for="email">邮箱</label>
+                <input class="txt" id="email" type="text" name="email" placeholder="请输入您的邮箱">
+            </div>
+
+            <div class="row">
+                <input type="submit" value="确认" class="btn submitBtn">
+            </div>
+        </form>
+        <div class="row hidden" id="tip">
+            <p class="hasLeftMargin">密码已通过<a href="s/login" id="emailUrl" target="_blank" class="txtGreen">邮件</a>发送到您邮箱，请进入邮箱进行查收！</p>
+            <a href="s/login" class="btn submitBtn">返回登录</a>
+        </div>
+    </article>
+</section>
+#include("/footer.html")
+</body>
+</html>

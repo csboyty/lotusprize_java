@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    #include("/baseUrl.html")
+    <!--<meta charset="utf-8">
+    <base href="http://localhost/lotusprizeWeb2014/">
+    <title>2014第四届“芙蓉杯”国际工业设计创新大赛</title>
+    <link rel="shortcut icon" href="images/app/favicon.png" mce_href="images/app/favicon.png" type="image/x-png">-->
+
+    <link type="text/css" rel="stylesheet" href="css/lib/jquery.toastmessage.css">
+    <link type="text/css" rel="stylesheet" href="css/src/common.css">
+    <link type="text/css" rel="stylesheet" href="css/src/admin/judgeRecordCreate.css">
+    <script type="text/javascript" src="js/lib/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.toastmessage.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.form.js"></script>
+    <script type="text/javascript" src="js/lib/juicer-min.js"></script>
+    <script type="text/javascript" src="js/src/config.js"></script>
+    <script type="text/javascript" src="js/src/admin/judgeRecordCreate.js"></script>
+    <script type="text/javascript">
+        var href="s/topic/mgr";
+        var stage="${stage}";
+        var topicId="${topicId}";
+        var topicName="${topicName}";
+    </script>
+</head>
+<body>
+
+#parse("/header.html")
+
+
+<script type="text/template" id="workTrTpl">
+    {@each rows as row}
+    <tr>
+        <td class="checkTd"><input class="checkRow" type="checkbox"></td>
+        <td class="checkTd idTd">${row.id}</td>
+        <td>${row.title}</td>
+    </tr>
+    {@/each}
+</script>
+
+<section class="main">
+
+#include("/admin/adminMenu.html")
+
+<article class="content">
+
+<form method="post" action="s/admin/artifact2expert/bind" id="judgeRecordCreateForm">
+    <div class="row">
+        <a href="s/admin/artifact2expert/topic/${topicId}?topicName=${topicName}">返回评审记录列表</a>
+    </div>
+    <div class="row">
+        <label>选题名称:</label><label>${topicName}</label>
+    </div>
+
+    <div class="toolbar">
+        <label class="labelTxt">已选评委（<span id="selectedJudgeCount">0</span>）个</label>
+    </div>
+    <div class="tableContainer">
+        <table class="dataTable">
+            <thead>
+            <tr>
+                <th class="checkTd"><input type="checkbox" id="checkAllJudge"></th>
+                <th class="idTd checkTd">ID</th>
+                <th>姓名</th>
+                <th class="titleTd">公司</th>
+            </tr>
+            </thead>
+        </table>
+        <div class="childTableContainer">
+
+            <table class="dataTable" id="judgeTable">
+                <tbody>
+                   #foreach($expert in $experts)
+                   <tr>
+                       <td class="checkTd"><input class="checkRow" type="checkbox"></td>
+                       <td class="idTd checkTd">${expert.expertId}</td>
+                       <td>${expert.expertName}</td>
+                       <td class="titleTd">${expert.organization}</td>
+                   </tr>
+                   #end
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <label class="labelTxt">已选作品（<span id="selectedWorkCount">0</span>）个</label>
+        <!--<select id="topicSelect">
+            <option value="1">选题一</option>
+        </select>
+        <input type="button" id="addByTopic" class="btn" value="按课题添加">
+        <input type="button" id="deleteCheckedWork" class="btn hasLeftMargin" value="删除所选">-->
+    </div>
+    <div class="tableContainer">
+        <table class="dataTable">
+            <thead>
+            <tr>
+                <th class="checkTd"><input type="checkbox" id="checkAllWork"></th>
+                <th class="checkTd idTd">ID</th>
+                <th>标题</th>
+            </tr>
+            </thead>
+        </table>
+        <div class="childTableContainer">
+            <table class="dataTable" id="workTable">
+                <tbody>
+                <!--<tr>
+                    <td class="checkTd"><input class="checkRow" type="checkbox"></td>
+                    <td class="checkTd idTd">1</td>
+                    <td class="titleTd">何人谁谁阿打发打发打发打发到法定分谁谁谁谁水水水水谁谁谁可</td>
+                    <td class="titleTd">湖南大学</td>
+                </tr>-->
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    <input class="btn" type="submit" value="提交">
+</form>
+</article>
+</section>
+
+#include("/footer.html")
+
+</body>
+</html>

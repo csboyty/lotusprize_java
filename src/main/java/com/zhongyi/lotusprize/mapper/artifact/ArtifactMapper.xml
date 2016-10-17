@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zhongyi.lotusprize.mapper.artifact.ArtifactMapper">
+	<resultMap id="artifactMap" type="com.zhongyi.lotusprize.domain.artifact.Artifact" >
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="topic_id" property="topicId" jdbcType="INTEGER" />
+		<result column="own_account_id" property="ownAccountId" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="description" property="description" jdbcType="VARCHAR"  />
+		<result column="profile" property="profile" jdbcType="VARCHAR" />
+		<result column="organizations" property="organizations" jdbcType="VARCHAR"  />
+		<result column="authors" property="authors" jdbcType="VARCHAR"  />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="status" property="status" jdbcType="SMALLINT" />
+		<result column="attachment" property="attachment" jdbcType="VARCHAR" />
+		<collection property="introduces" column="id" resultMap="artifactIntroduceMap" />
+	</resultMap>
+	
+	
+	<resultMap id="artifactIntroduceMap" type="com.zhongyi.lotusprize.domain.artifact.ArtifactIntroduce" >
+		<id column="artifact_id" property="artifactId" jdbcType="INTEGER" />
+		<result column="pos" property="pos" jdbcType="INTEGER" />
+		<result column="image" property="image" jdbcType="VARCHAR" />
+		<result column="text" property="text" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	
+	<insert id="insertArtifact" parameterType="com.zhongyi.lotusprize.domain.artifact.Artifact">
+		 <selectKey resultType="java.lang.Integer" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into artifact(topic_id,own_account_id,title,description,profile,organizations,authors,attachment,create_time)
+        values(#{topicId,jdbcType=INTEGER},#{ownAccountId,jdbcType=INTEGER},#{title,jdbcType=VARCHAR},#{description,jdbcType=VARCHAR},#{profile,jdbcType=VARCHAR},#{organizations,jdbcType=VARCHAR},#{authors,jdbcType=VARCHAR},#{attachment,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP})
+	</insert>
+	
+	
+	<insert id="insertArtifactIntroduces">
+		insert into artifact_introduce(artifact_id,pos,image,text) values
+		<foreach collection="introduces" item="introduce" index="index" separator=",">
+			(#{artifactId,jdbcType=INTEGER},#{introduce.pos,jdbcType=INTEGER},#{introduce.image,jdbcType=VARCHAR},#{introduce.text,jdbcType=VARCHAR})
+		</foreach>
+	</insert>
+	
+	<delete id="deleteArtifactIntroduceByArtifactId" parameterType="java.lang.Integer">
+		delete from artifact_introduce where artifact_id=#{artifactId}
+	</delete>
+	
+	<update id="updateArtifact" parameterType="com.zhongyi.lotusprize.domain.artifact.Artifact">
+		update artifact set 
+		title=#{title,jdbcType=VARCHAR},
+		description=#{description,jdbcType=VARCHAR},
+		profile=#{profile,jdbcType=VARCHAR},
+		authors=#{authors,jdbcType=VARCHAR},
+		organizations=#{organizations,jdbcType=VARCHAR},
+		attachment=#{attachment,jdbcType=VARCHAR},
+		update_time=current_timestamp()
+		where id=#{id}
+	</update>
+	
+	<delete id="deleteByArtifactId" parameterType="java.lang.Integer">
+		delete from  artifact where id=#{artifactId}
+	</delete>
+	
+	<delete id="deleteArtifactResultByArtifactId" parameterType="java.lang.Integer">
+		delete from artifact_result where artifact_id=#{artifactId}
+	</delete>
+	
+	<update id="updateArtifactProfile">
+		update artifact set profile=#{profile,jdbcType=VARCHAR} where id=#{artifactId}
+	</update>
+	
+	<update id="updateIntroduceImage">
+		update artifact_introduce set image=#{image,jdbcType=VARCHAR} where artifact_id=#{artifactId} and pos=#{pos}
+	</update>
+	
+	<select id="countArtifactResultScoreBy" resultType="java.lang.Integer">
+		select count(artifact.id) from artifact
+		<trim prefix="WHERE" prefixOverrides="AND |OR">
+			1=1
+			<if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(topicId)">
+				AND artifact.topic_id = #{topicId}
+			</if>
+			<if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(title)">
+				AND  artifact.title like CONCAT('%', #{title}, '%')
+			</if>
+			<if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(status)">
+                AND  artifact.status in
+                <foreach collection="status" item="statusItem" open="(" close=")" separator=",">
+                   #{statusItem}
+                </foreach>
+            </if>
+		</trim> 
+	</select>
+	
+	<resultMap id="artifactResultScoreMap" type="map">
+	     <id column="artifact_id" property="id"/>
+	     <result column="total_score_1" property="totalScore1" />
+	     <result column="total_score_2" property="totalScore2" />
+	     <result column="total_praise" property="totalPraise" />
+	     <result column="prize" property="prize" />
+	     <result column="hatch" property="hatch" />
+	     <result column="round" property="round" />
+	</resultMap>
+	
+	<select id="findArtifactResultScoreBy" resultMap="artifactResultScoreMap">
+			select artifact.id as artifact_id,
+	        artifact_score_round1.total_score_1 as total_score_1,
+	        artifact_score_round2.total_score_2 as total_score_2,
+	        artifact_result.total_praise as total_praise,
+	        artifact_result.prize as prize,
+	        artifact_result.hatch as hatch,
+	        artifact_result.round as round
+	        from artifact
+	        left join artifact_result on artifact.id=artifact_result.artifact_id
+	        inner join artifact_score_round1 on artifact.id=artifact_score_round1.artifact_id
+	        inner join artifact_score_round2 on artifact.id=artifact_score_round2.artifact_id
+			<trim prefix="WHERE" prefixOverrides="AND |OR">
+				 1=1
+				<if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(topicId)">
+					AND artifact.topic_id = #{topicId}
+				</if>
+				<if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(title)">
+					AND artifact.title like CONCAT('%', #{title}, '%')
+				</if>
+				<if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(status)">
+	                AND  artifact.status in
+	                <foreach collection="status" item="statusItem" open="(" close=")" separator=",">
+	                   #{statusItem}
+	                </foreach>
+                </if>
+			</trim>
+		ORDER BY 
+		<if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(orderby)">
+		      ${orderby} ${ordering},
+		</if>
+		artifact_id ASC
+		<if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotZero(limit)">
+		      LIMIT ${limit} OFFSET ${offset} 
+		</if>
+	</select>
+	
+	<resultMap id="artifactResultMap" type="map">
+         <id column="artifact_id" property="id"/>
+         <result column="total_praise" property="totalPraise" />
+         <result column="prize" property="prize" />
+         <result column="hatch" property="hatch" />
+    </resultMap>
+    
+	<select id="findArtifactResultScoreByAccount" parameterType="java.lang.Integer" resultMap="artifactResultMap">
+	    select artifact.id as artifact_id,
+        artifact_result.total_praise as total_praise,
+        artifact_result.prize as prize,
+        artifact_result.hatch as hatch
+        from artifact  inner join artifact_result on artifact.id=artifact_result.artifact_id
+        where artifact.own_account_id=#{accountId}
+        order by artifact.id asc
+	</select>
+	
+	<update id="updateStatus">
+        update artifact set status=#{status,jdbcType=SMALLINT} where artifact.id in
+        <foreach collection="artifactIdIter" item="artifactId" open="(" separator="," close=")">
+            #{artifactId}
+        </foreach>
+    </update>
+    
+    <select id="countArtifactByVote" resultType="java.lang.Integer">
+        select count(id) from artifact
+        <trim prefix="WHERE" prefixOverrides="AND |OR">
+            <if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(topicId)">
+                AND artifact.topic_id = #{topicId}
+            </if>
+            <if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(title)">
+                AND  artifact.title like CONCAT('%', #{title}, '%')
+            </if>
+            <if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(status)">
+                AND artifact.status = #{status}
+            </if>
+        </trim> 
+    </select>
+    
+    <select id="findArtifactByVote" resultMap="artifactResultMap">
+        select artifact.id as artifact_id,
+        artifact_result.total_praise as total_praise,
+        artifact_result.prize as prize
+        from artifact inner join artifact_result on artifact.id=artifact_result.artifact_id
+        <trim prefix="WHERE" prefixOverrides="AND |OR">
+            <if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(topicId)">
+                AND artifact.topic_id = #{topicId}
+            </if>
+            <if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(title)">
+                AND artifact.title like CONCAT('%', #{title}, '%')
+            </if>
+            <if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(status)">
+                AND artifact.status = #{status}
+            </if>
+        </trim> 
+        ORDER BY ${orderby} ${ordering}
+        <if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotZero(limit)">
+              LIMIT ${limit} OFFSET ${offset} 
+        </if>
+    </select>
+    
+    <select id="countArtifactByTopicAndStatus"  resultType="java.lang.Integer">
+          select count(id) from artifact where artifact.topic_id = #{topicId}
+          <if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(status)">
+                AND  artifact.status in
+                <foreach collection="status" item="statusItem" open="(" close=")" separator=",">
+                   #{statusItem}
+                </foreach>
+          </if>
+    </select>
+    
+    
+    <resultMap id="honorArtifacMap" type="map">
+         <id column="artifact_id" property="artifactId"/>
+         <result column="topic_id" property="topcId" />
+         <result column="category" property="category" />
+         <result column="title" property="title" />
+         <result column="profile" property="profile" />
+         <result column="total_praise" property="totalPraise" />
+         <result column="prize" property="prize" />
+         <result column="hatch" property="hatch" />
+    </resultMap>
+    
+    <select id="findHonorArtifactBy" resultMap="honorArtifacMap">
+        select artifact.id as artifact_id,artifact.topic_id as topic_id,
+        topic.category as category,artifact.title as title,artifact.profile as profile,
+        artifact_result.total_praise as total_praise,artifact_result.prize as prize,artifact_result.hatch as hatch
+        from artifact inner join topic on artifact.topic_id=topic.id
+        inner join artifact_result on artifact.id=artifact_result.artifact_id
+        where artifact_result.prize &gt;=2
+        <if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(topicId)">
+             AND artifact.topic_id = #{topicId}
+        </if>
+        order by  artifact_result.prize desc
+    </select>
+    
+    <select id="findRound1ArtifactIdByTopicId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select id from artifact where topic_id=#{topicId} and status = 4
+    </select>
+    
+    <select id="findRound2ArtifactIdByTopicId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select artifact_result.artifact_id
+        from artifact_result inner join artifact on artifact_result.artifact_id = artifact.id
+        where artifact_result &gt;=2 and artifact.topic_id=#{topicId}
+    </select>
+    
+    <select id="iterArtifact" resultMap="artifactMap">
+        select artifact.id, artifact.topic_id, artifact.own_account_id, artifact.title, artifact.description, artifact.profile,artifact.create_time, artifact.organizations,artifact.authors, artifact.status, artifact.attachment,
+        artifact_introduce.artifact_id, artifact_introduce.pos,artifact_introduce.image, artifact_introduce.text
+        from artifact left join artifact_introduce on  artifact_introduce.artifact_id=artifact.id
+        where artifact.id &gt;#{baseArtifactId} order by artifact.id asc limit ${limit}
+    </select>
+    
+    
+    
+	
+</mapper>

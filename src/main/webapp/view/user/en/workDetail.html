@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    #include("/en/baseUrl.html")
+    <!--<base href="http://localhost/lotusprizeWeb2014/">-->
+
+    <link type="text/css" rel="stylesheet" href="css/src/common.css">
+    <style type="text/css">
+        .topHeader{
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body  class="noBg enBody">
+
+#parse("/en/header.html")
+
+<div class="workInfo detailPageInfo" id="workInfo">
+    <input id="voteToken" type="hidden" value="${voteToken}">
+    <input id="voteExist" type="hidden" value="${voteExist}">
+    <div>
+        <span>Topic:&nbsp;${artifact.topicName}</span>
+
+        <h2 class="title txtGreen">${artifact.title}</h2>
+        <p class="organization">Organization:&nbsp;${artifact.organization}</p>
+        <p class="author">Author:&nbsp;${artifact.author}</p>
+    </div>
+    <p class="description">${artifact.description}</p>
+
+    #foreach( $int in $artifact.introduces)
+    <div class="workAttachment">
+        <img src="${int.image}">
+        <div class="attaDescription">${int.text}</div>
+    </div>
+    #end
+
+    <p>
+        <a href="s/user/artifact/pdf/${artifact.id}" target="_blank" class="txtGreen">Download PDF</a>
+    </p>
+    #if($authInfo.roleName=="admin"||$authInfo.roleName=="topicManager"||$hasDetailPermit)
+        <p>
+            <a href="${artifact.attachment}" target="_blank" class="txtGreen">Download Attachment</a>
+        </p>
+    #end
+
+
+</div>
+
+#include("/en/footer.html")
+
+</body>
+</html>

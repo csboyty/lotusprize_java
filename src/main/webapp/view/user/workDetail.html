@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    #include("/baseUrl.html")
+    <!--<base href="http://localhost/lotusprizeWeb2014/">-->
+
+    <link type="text/css" rel="stylesheet" href="css/src/common.css">
+    <style type="text/css">
+        .topHeader{
+            box-shadow: none;
+        }
+    </style>
+    <script>
+        var href="";
+    </script>
+</head>
+<body  class="noBg">
+
+#parse("/header.html")
+
+<div class="workInfo detailPageInfo" id="workInfo">
+    <input id="voteToken" type="hidden" value="${voteToken}">
+    <input id="voteExist" type="hidden" value="${voteExist}">
+    <div>
+        <span class="topicTitle">选题:&nbsp;${artifact.topicName}</span>
+
+        <h2 class="title txtGreen">${artifact.title}</h2>
+        <p class="organization">院校/组织:&nbsp;${artifact.organization}</p>
+        <p class="author">作者:&nbsp;${artifact.author}</p>
+    </div>
+    <p class="description">${artifact.description}</p>
+
+
+
+    #foreach( $int in $artifact.introduces)
+        <div class="workAttachment">
+            <img src="${int.image}">
+            <div class="attaDescription">${int.text}</div>
+        </div>
+    #end
+
+    <p>
+        <a href="s/user/artifact/pdf/${artifact.id}" target="_blank" class="txtGreen">下载PDF</a>
+    </p>
+    #if($authInfo.roleName=="admin"||$authInfo.roleName=="topicManager"||$hasDetailPermit)
+    <p>
+        <a href="${artifact.attachment}" target="_blank" class="txtGreen">附件下载</a>
+    </p>
+    #end
+
+</div>
+
+#include("/footer.html")
+
+</body>
+</html>

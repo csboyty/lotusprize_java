@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    #include("/baseUrl.html")
+    <!--<meta charset="utf-8">
+    <base href="http://localhost/lotusprizeWeb2014/">
+    <title>2014第四届“芙蓉杯”国际工业设计创新大赛</title>
+    <link rel="shortcut icon" href="images/app/favicon.png" mce_href="images/app/favicon.png" type="image/x-png">-->
+
+    <link type="text/css" rel="stylesheet" href="css/lib/jquery.toastmessage.css">
+    <link type="text/css" rel="stylesheet" href="css/lib/jquery.dataTables.css">
+    <link type="text/css" rel="stylesheet" href="css/src/common.css">
+    <script type="text/javascript" src="js/lib/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.toastmessage.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="js/src/config.js"></script>
+    <script type="text/javascript" src="js/src/admin/judgeRecordMgr.js"></script>
+    <script>
+        var href="s/topic/mgr";
+        var topic='$lotusprizeTool.json($!{topic})';
+    </script>
+</head>
+<body>
+
+#parse("/header.html")
+
+<section class="main">
+
+    #include("/admin/adminMenu.html")
+
+    <article class="content">
+        <section>
+            <div class="row">
+                <label>选题名称:</label><label>${topic.name}</label>
+            </div>
+            <div class="row">
+                <input type="text" class="searchTxt txt" id="searchExpert" placeholder="搜索评委">
+
+                #if($stage>=7)
+                <span class="sortPanel">
+                    <label>评审：</label>
+                    <select id="roundSelect">
+                        <option value="2">第二轮</option>
+                        <option value="1">第一轮</option>
+                    </select>
+                </span>
+                #end
+            </div>
+            <div class="row">
+                <span>
+                    <a href="#" id="checkAllBtn">全选</a>&nbsp;|&nbsp;<a href="#" id="unCheckAllBtn">清除所选</a>
+                    &nbsp;|&nbsp;<a href="#" id="reverseCheckBtn">反选</a>
+                    &nbsp;|&nbsp;<a href="#" id="batchDelete">批量删除</a>
+                </span>
+            </div>
+        </section>
+        <section>
+            #if($stage=="5"||$stage=="7")
+            <div class="row">
+                <a class="btn" href="s/admin/artifact2expert/bind?topicId=${topic.id}&topicName=${topic.name}">新建评审记录</a>
+            </div>
+            #end
+
+            <table id="judgeRecordTable">
+                <thead>
+                <tr>
+                    <th><input type="checkbox" id="checkAll"></th>
+                    <th>作品标题</th>
+                    <th>评委</th>
+                    <th>评分</th>
+                    <th>评分时间</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!--<tr>
+                    <td><input class="checkRow" type="checkbox"></td>
+                    <td>dddddddd</td>
+                    <td>dddddddd</td>
+                    <td>dddddddd</td>
+                    <td>
+                        <select class="setTopicStatus rowSelect">
+                            <option value="">请选择</option>
+                            <option value="d">d</option>
+                        </select>
+                    </td>
+                    <td>298</td>
+                    <td><a href="#" class="check">查看</a></td>
+                </tr>-->
+                </tbody>
+            </table>
+        </section>
+    </article>
+</section>
+#include("/footer.html")
+</body>
+</html>

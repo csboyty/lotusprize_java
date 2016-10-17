@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zhongyi.lotusprize.mapper.artifact.Expert2ArtifactMapper">
+
+    <insert id="insertTopic2Expert">
+        insert into expert2topic(topic_id,expert_id,round,ratio)
+        values(#{topicId,jdbcType=INTEGER},#{expertId,jdbcType=INTEGER},#{round,jdbcType=SMALLINT},#{ratio,jdbcType=FLOAT})
+    </insert>
+	
+	<delete id="deleteTopic2Expert">
+	   delete from expert2topic where topic_id=#{topicId} and expert_id=#{expertId} and round=#{round}
+	</delete>
+	
+	
+	<select id="findExpertIdByTopicIdAndRound" resultType="INTEGER">
+	   select expert_id from expert2topic where topic_id=#{topicId} and round=#{round}
+	</select>
+	
+	
+	<resultMap  id="expert2TopicObjectMap" type="com.zhongyi.lotusprize.mapper.artifact.Expert2ArtifactMapper$Expert2TopicObject">
+	   <id column="topic_id" property="topicId" jdbcType="INTEGER"/>
+	   <id column="expert_id" property="expertId" jdbcType="INTEGER" />
+	   <id column="round" property="round" jdbcType="SMALLINT" />
+	   <result column="expert_name" property="expertName" jdbcType="VARCHAR" />
+	   <result column="ratio" property="ratio" jdbcType="FLOAT"/>
+	   <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	
+	<select id="findExpert2TopicByTopicId" resultMap="expert2TopicObjectMap">
+	   select topic_id,expert_id,round,ratio,create_time,account.a_fullname as expert_name
+	   from expert2topic inner join account on expert2topic.expert_id=account.a_id
+	   where topic_id in
+	   <foreach collection="topicId" item="item" open="(" close=")" separator=",">
+	       #{item}
+	   </foreach>
+	</select>
+	
+	
+	<select id="loadRatioByExpertIdAndTopicIdAndRound" resultType="FLOAT">
+	   select ratio from expert2topic where expert_id=#{expertId} and topic_id=#{topicId} and round=#{round}
+	</select>
+	
+	
+	<delete id="deleteArtifact2ExpertScoreByTopicIdAndExpertIdAndRound">
+	    delete expert2artifact_score from expert2artifact_score inner join artifact on expert2artifact_score.artifact_id=artifact.id
+	    where artifact.topic_id=#{topicId}
+	    and expert2artifact_score.expert_id=#{expertId} 
+	    and expert2artifact_score.round=#{round}
+	</delete>
+	
+	<delete id="deleteArtifact2ExpertScoreByArtifactIdAndRound">
+	    delete expert2artifact_score from expert2artifact_score where artifact_id=#{artifactId} and round=#{round}
+	</delete>
+	
+	
+	<update id="insertArtifact2ExpertScore">
+	   insert into expert2artifact_score(artifact_id,expert_id,score,weight_score,round,create_time)
+	   values(#{artifactId,jdbcType=INTEGER},#{expertId,jdbcType=INTEGER},#{score,jdbcType=INTEGER},#{weightScore,jdbcType=FLOAT},#{round,jdbcType=SMALLINT},current_timestamp)
+	   ON DUPLICATE KEY UPDATE	
+	   score=#{score,jdbcType=INTEGER},
+	   weight_score=#{weightScore,jdbcType=FLOAT},
+	   create_time=current_timestamp
+	</update>
+	
+	
+	
+	<select id="countArtifact2ExpertRound1" resultType="java.lang.Integer">
+	   select count(artifact.id) from artifact
+	   inner join expert2topic on artifact.topic_id=expert2topic.topic_id
+	   left join expert2artifact_score on expert2artifact_score.artifact_id=artifact.id
+       and expert2artifact_score.round = expert2topic.round 
+       and expert2artifact_score.expert_id=expert2topic.expert_id
+	   where expert2topic.expert_id=#{expertId}
+	   and expert2topic.round=1
+	   and artifact.topic_id=#{topicId}
+	   and artifact.status=4
+	   <choose>
+	       <when test="showOption == 'scored' ">
+	           and expert2artifact_score.score is not null
+	       </when>
+	       <when test="showOption == 'unscored' ">
+               and expert2artifact_score.score is null
+           </when>
+           <otherwise>
+               and 1=1
+           </otherwise>
+	   </choose>
+	   
+	   <if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(artifactTitle)">
+              AND artifact.title like CONCAT(#{artifactTitle}, '%')
+       </if>
+	</select>
+	
+	<select id="countArtifact2ExpertRound2" resultType="java.lang.Integer">
+       select count(artifact.id) from artifact
+       inner join expert2topic on artifact.topic_id=expert2topic.topic_id
+       inner join artifact_result on artifact.id=artifact_result.artifact_id
+       left join expert2artifact_score on expert2artifact_score.artifact_id=artifact.id
+       and expert2artifact_score.round = expert2topic.round 
+       and expert2artifact_score.expert_id=expert2topic.expert_id
+       where expert2topic.expert_id=#{expertId}
+       and expert2topic.round=2
+       and artifact.topic_id=#{topicId} 
+       and artifact_result.round= 2
+       <choose>
+           <when test="showOption == 'scored' ">
+               and expert2artifact_score.score is not null
+           </when>
+           <when test="showOption == 'unscored' ">
+               and expert2artifact_score.score is null
+           </when>
+           <otherwise>
+               and 1=1
+           </otherwise>
+       </choose>
+       <if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(artifactTitle)">
+              AND artifact.title like CONCAT(#{artifactTitle}, '%')
+       </if>
+    </select>
+	
+	<resultMap id="expert2ArtifactMap" type="map">
+       <id column="artifact_id" property="artifactId"/>
+       <result column="score" property="score" />
+    </resultMap>
+    
+    <select id="findArtifact2ExpertRound1" resultMap="expert2ArtifactMap">
+       select t.artifact_id, t.score from (
+	       select artifact.id as artifact_id, ifnull(expert2artifact_score.score,-1) as score,
+	       ifnull(expert2artifact_score.create_time,'2099-12-31 00:00:00') as score_time
+	       from artifact inner join expert2topic on artifact.topic_id= expert2topic.topic_id
+	       left join expert2artifact_score on expert2artifact_score.artifact_id=artifact.id
+	       and expert2artifact_score.round = expert2topic.round 
+	       and expert2artifact_score.expert_id=expert2topic.expert_id
+	       where expert2topic.expert_id=#{expertId} 
+	       and expert2topic.round=1
+	       and artifact.status=4 
+	       and artifact.topic_id=#{topicId}
+	       <choose>
+	           <when test="showOption == 'scored' ">
+	               and expert2artifact_score.score is not null
+	           </when>
+	           <when test="showOption == 'unscored' ">
+	               and expert2artifact_score.score is null
+	           </when>
+	           <otherwise>
+	               and 1=1
+	           </otherwise>
+           </choose>
+	       <if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(artifactTitle)">
+	              AND artifact.title like CONCAT(#{artifactTitle}, '%')
+	       </if>
+       ) as t
+       ORDER BY t.score_time DESC,t.artifact_id ASC
+       LIMIT ${limit} OFFSET ${offset} 
+    </select>
+    
+    <select id="findArtifact2ExpertRound2" resultMap="expert2ArtifactMap">
+       select t.artifact_id, t.score from (
+           select artifact.id as artifact_id, ifnull(expert2artifact_score.score,-1) as score,
+           ifnull(expert2artifact_score.create_time,'2099-12-31 00:00:00') as score_time
+           from artifact inner join expert2topic on artifact.topic_id= expert2topic.topic_id
+           inner join artifact_result on artifact.id=artifact_result.artifact_id
+           left join expert2artifact_score on expert2artifact_score.artifact_id=artifact.id
+           and expert2artifact_score.round = expert2topic.round
+           and expert2artifact_score.expert_id=expert2topic.expert_id
+           where expert2topic.expert_id=#{expertId} 
+           and expert2topic.round=2
+           and artifact.topic_id=#{topicId} 
+           and artifact_result.round=2
+           <choose>
+               <when test="showOption == 'scored' ">
+                   and expert2artifact_score.score is not null
+               </when>
+               <when test="showOption == 'unscored' ">
+                   and expert2artifact_score.score is null
+               </when>
+               <otherwise>
+                   and 1=1
+               </otherwise>
+           </choose>
+           <if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(artifactTitle)">
+                  AND artifact.title like CONCAT(#{artifactTitle}, '%')
+           </if>
+       ) as t
+       ORDER BY t.score_time DESC,t.artifact_id ASC
+       LIMIT ${limit} OFFSET ${offset} 
+    </select>
+    
+    
+    <select id="findArtifact2ExpertByCategoryRound2" resultMap="expert2ArtifactMap">
+    select t.artifact_id, t.score from (
+           select artifact.topic_id as topic_id,artifact.id as artifact_id, ifnull(expert2artifact_score.score,-1) as score,
+           ifnull(expert2artifact_score.create_time,'2099-12-31 00:00:00') as score_time
+           from artifact inner join expert2topic on artifact.topic_id= expert2topic.topic_id
+           inner join artifact_result on artifact.id=artifact_result.artifact_id
+           left join expert2artifact_score on expert2artifact_score.artifact_id=artifact.id
+           and expert2artifact_score.round = expert2topic.round
+           and expert2artifact_score.expert_id=expert2topic.expert_id
+           inner join topic on artifact.topic_id=topic.id
+           where expert2topic.expert_id=#{expertId} 
+           and expert2topic.round=2
+           and topic.category=#{category} 
+           and artifact_result.round=2
+           <choose>
+               <when test="showOption == 'scored' ">
+                   and expert2artifact_score.score is not null
+               </when>
+               <when test="showOption == 'unscored' ">
+                   and expert2artifact_score.score is null
+               </when>
+               <otherwise>
+                   and 1=1
+               </otherwise>
+           </choose>
+       ) as t
+       ORDER BY t.score_time DESC,t.topic_id ASC,t.artifact_id ASC
+    </select>
+    
+    
+    
+    
+    
+    <resultMap id="expertTopicStatus" type="map">
+       <id column="topic_id" property="topicId"/>
+       <result column="topic_title" property="topicTitle" />
+       <result column="cnt" property="cnt" />
+       <result column="scored_cnt" property="scoredCnt" />
+    </resultMap>
+    
+    <select id="countTopicStatusByExpertAndRound" resultType="INTEGER">
+        select count(expert2topic.topic_id) from expert2topic
+        where expert2topic.expert_id=#{expertId} and expert2topic.round=#{round}
+    </select>
+    
+    
+    <select id="findTopicStatusByExpertAndRound1" resultMap="expertTopicStatus">
+        select t.topic_id,t.cnt,t.scored_cnt,topic_detail.title as topic_title from 
+        (
+	        select expert2topic.topic_id,
+	        sum(if(artifact.status=4,1,0)) as cnt,
+	        sum(if(expert2artifact_score.artifact_id is null,0,1)) as scored_cnt 
+	        from expert2topic inner join artifact on artifact.topic_id=expert2topic.topic_id
+	        left join expert2artifact_score on expert2artifact_score.expert_id =expert2topic.expert_id
+	        and expert2artifact_score.round = expert2topic.round
+	        and expert2artifact_score.artifact_id = artifact.id
+	        where expert2topic.expert_id=#{expertId} and expert2topic.round=1
+	        group by expert2topic.topic_id
+        ) as t
+        inner join topic_detail on t.topic_id = topic_detail.topic_id
+        where topic_detail.lang='zh'
+        order by t.topic_id asc
+        <if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(limit)">
+                  LIMIT ${limit} OFFSET ${offset} 
+         </if>
+    </select>
+    
+    
+     <select id="findTopicStatusByExpertAndRound2" resultMap="expertTopicStatus">
+        select t.topic_id,t.cnt,t.scored_cnt,topic_detail.title as topic_title from 
+        (
+            select expert2topic.topic_id,
+            sum(if(artifact_result.round=2,1,0)) as cnt,
+            sum(if(artifact_result.round=2 and expert2artifact_score.artifact_id is not null,1,0)) as scored_cnt 
+            from expert2topic inner join artifact on artifact.topic_id=expert2topic.topic_id
+            inner join artifact_result on artifact.id=artifact_result.artifact_id
+            left join expert2artifact_score on expert2artifact_score.expert_id =expert2topic.expert_id
+            and expert2artifact_score.round = expert2topic.round
+            and expert2artifact_score.artifact_id = artifact.id
+            where expert2topic.expert_id=#{expertId} and expert2topic.round=2
+            group by expert2topic.topic_id
+        ) as t
+        inner join topic_detail on t.topic_id = topic_detail.topic_id
+        where topic_detail.lang='zh'
+        order by t.topic_id asc
+        <if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(limit)">
+                  LIMIT ${limit} OFFSET ${offset} 
+         </if>
+    </select>
+    
+     <resultMap id="expertCategoryStatus" type="map">
+       <id column="category" property="category"/>
+       <result column="cnt" property="cnt" />
+       <result column="scored_cnt" property="scoredCnt" />
+    </resultMap>
+    
+    
+    <select id="findTopicStatusByExpertAndRound2ByCategory" parameterType="java.lang.Integer" resultMap="expertCategoryStatus">
+     select t.category,t.cnt,t.scored_cnt from 
+        (
+            select topic.category,
+            sum(if(artifact_result.round=2,1,0)) as cnt,
+            sum(if(artifact_result.round=2 and expert2artifact_score.artifact_id is not null,1,0)) as scored_cnt 
+            from expert2topic inner join artifact on artifact.topic_id=expert2topic.topic_id
+            inner join artifact_result on artifact.id=artifact_result.artifact_id
+            left join expert2artifact_score on expert2artifact_score.expert_id =expert2topic.expert_id
+            and expert2artifact_score.round = expert2topic.round
+            and expert2artifact_score.artifact_id = artifact.id
+            inner join topic on expert2topic.topic_id = topic.id
+            where expert2topic.expert_id=#{expertId} and expert2topic.round=2 
+            group by topic.category
+        ) as t
+        order by t.category asc
+    </select>
+    
+    
+    <resultMap id="artifactScoreMap" type="map">
+       <id column="expert_id" property="expertId"/>
+       <result column="expert_name" property="expertName" />
+       <result column="score" property="score" />
+       <result column="weight_score" property="weightScore" />
+       <result column="ratio" property="weight" />
+    </resultMap>
+    
+    <select id="findScoreByArtifactIdAndRound" resultMap="artifactScoreMap">
+        select expert2topic.expert_id,account.a_fullname as expert_name,expert2topic.ratio,ifnull(expert2artifact_score.score,0) score, ifnull(expert2artifact_score.weight_score,0) weight_score
+            from expert2topic inner join artifact on artifact.topic_id=expert2topic.topic_id and artifact.id=#{artifactId}
+            and expert2topic.round=#{round}
+            left join expert2artifact_score on expert2topic.expert_id=expert2artifact_score.expert_id 
+            and artifact.id=expert2artifact_score.artifact_id
+            and expert2topic.round=expert2artifact_score.round
+            inner join account on expert2topic.expert_id=account.a_id
+    </select>
+    
+    
+    <resultMap id="expertTopicRoundStatus" type="map">
+       <result column="cnt" property="cnt" />
+       <result column="scored_cnt" property="scoredCnt" />
+    </resultMap>
+    
+    <select id="loadTopicStatusByExpertAndTopicAndRound1" resultMap="expertTopicRoundStatus">
+            select sum(if(artifact.status=4,1,0)) as cnt, sum(if(expert2artifact_score.artifact_id is null,0,1)) as scored_cnt 
+            from expert2topic inner join artifact on artifact.topic_id=expert2topic.topic_id
+            and expert2topic.topic_id=#{topicId}
+            left join expert2artifact_score on expert2artifact_score.expert_id =expert2topic.expert_id
+            and expert2artifact_score.round = expert2topic.round
+            and expert2artifact_score.artifact_id = artifact.id
+            where expert2topic.expert_id=#{expertId} and expert2topic.round=1
+    </select>
+    
+      <select id="loadTopicStatusByExpertAndTopicAndRound2" resultMap="expertTopicRoundStatus">
+            select sum(if(artifact_result.round=2,1,0)) as cnt, 
+            sum(if(artifact_result.round=2 and expert2artifact_score.artifact_id is not null,1,0)) as scored_cnt 
+            from expert2topic inner join artifact on artifact.topic_id=expert2topic.topic_id
+            and expert2topic.topic_id=#{topicId}
+            inner join artifact_result on artifact.id=artifact_result.artifact_id
+            left join expert2artifact_score on
+            expert2artifact_score.expert_id =expert2topic.expert_id
+            and expert2artifact_score.round = expert2topic.round 
+            and expert2artifact_score.artifact_id = artifact.id
+            where expert2topic.expert_id=#{expertId} and expert2topic.round=2 
+    </select>
+    
+    
+</mapper>

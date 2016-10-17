@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    #include("/baseUrl.html")
+    <!--<base href="http://localhost/lotusprizeWeb2014/">-->
+
+    <link href="css/lib/jquery.toastmessage.css" rel="stylesheet" type="text/css">
+    <link href="css/src/common.css" rel="stylesheet" type="text/css">
+
+    <script type="text/javascript" src="js/lib/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.form.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.toastmessage.js"></script>
+    <script type="text/javascript" src="js/src/config.js"></script>
+    <script>
+        var href="s/admin/user/userManage";
+
+        $(document).ready(function(){
+            $("#myForm").submit(function(){
+                config.showBlackout();
+                $(this).ajaxSubmit({
+                    dataType:"json",
+                    success:function(data){
+                        if(data.success){
+                            config.hideBlackout();
+                            $().toastmessage("showSuccessToast",config.message.optSuccRedirect);
+                            config.redirect("s/admin/user/userManage");
+                        }else{
+                            config.ajaxReturnErrorHandler(data);
+                        }
+                    },
+                    error:function(){
+                        config.ajaxErrorHandler();
+                    }
+                });
+
+                return false;
+            });
+        });
+    </script>
+</head>
+<body>
+#parse("/header.html")
+<section class="main">
+    #include("/admin/adminMenu.html")
+    <article class="content">
+        <form action="s/admin/user/resetPassword" method="post" id="myForm">
+            <input type="hidden" name="id" value="$!{id}">
+
+            <div class="row">
+                <label class="labelTxt" for="pwd">密码</label>
+                <input class="txt" id="pwd" pattern=".{6,20}" name="password" type="password"
+                        title="密码6-20位！" onchange="form.confirmPwd.pattern = this.value" required>
+            </div>
+            <div class="row">
+                <label class="labelTxt" for="confirmPwd">确认密码</label>
+                <input class="txt" id="confirmPwd" title="请与密码一致！" name="confirmPwd" type="password" required>
+            </div>
+            <div class="row">
+                <input type="submit" value="确定" class="btn submitBtn">
+            </div>
+        </form>
+    </article>
+</section>
+
+#include("/footer.html")
+</body>
+</html>

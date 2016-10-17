@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    #include("/en/baseUrl.html")
+    <!--<base href="http://localhost/lotusprizeWeb2014/">-->
+
+    <link type="text/css" rel="stylesheet" href="css/lib/jquery.toastmessage.css">
+    <link type="text/css" rel="stylesheet" href="css/src/common.css">
+    <script type="text/javascript" src="js/lib/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.toastmessage.js"></script>
+    <script type="text/javascript" src="js/lib/juicer-min.js"></script>
+    <script type="text/javascript" src="js/src/en/config.js"></script>
+    <script type="text/javascript" src="js/src/user/topicView.js"></script>
+    <script type="text/javascript" src="js/src/baiduAnalytics.js"></script>
+    <script>
+        var href="";
+        var stage="${stage}";
+    </script>
+</head>
+<body class="enBody wpBody">
+<script type="text/template" id="selectedElTpl">
+    <li><a href="#" class="${className}" data-value="${dataValue}">${text}</a></li>
+</script>
+<script type="text/template" id="topicArrayTpl">
+    {@each topicArray as topic}
+    <li class="item">
+        {@if stage==2}
+        <a href="s/user/artifact/create?topicId=${topic.id}&_lang=en" class="tip">Upload</a>
+        {@/if}
+        <a href="s/topic/view/${topic.id}?_lang=en" target="_blank">
+            <img src="${topic.profile}" class="thumb">
+            <p class="infoRow">
+                <img src="${topic.corpLogo}" class="companyLogo">
+                <span class="verMiddleContainer">
+                    <span class="spanTxt companyName" title="${topic.corpName}">${topic.corpName}</span>
+                    <span class="spanTxt money right">
+                         {@if topic.reward==0}
+                        Internship
+                        {@else}
+                        &yen;${topic.reward}
+                        {@/if}
+                    </span>
+                </span>
+            </p>
+            <p  class="infoRow lastInfoRow">
+                <span class="title spanTxt" title="${topic.name}">${topic.name}</span>
+                <span class="spanTxt right">${topic.category}</span>
+            </p>
+        </a>
+    </li>
+    {@/each}
+</script>
+
+#parse("/en/wpHeader.html")
+
+<div class="content wpContent">
+    <div class="contentHeader">
+        <div class="row">
+            <span>Please click on the topic you're interested in to see details and upload works.</span>
+        </div>
+        <div class="row">
+            <label>Category：</label>
+            <a href="#" class="category active" data-category="">All</a>
+            &nbsp;|&nbsp;
+            <a href="#" class="category" data-category="1">A1 Digital Manufacturing</a>
+            &nbsp;|&nbsp;
+            <a href="#" class="category" data-category="2">A2 Intelligent Products</a>
+            &nbsp;|&nbsp;
+            <a href="#" class="category" data-category="3">B Social Innovation</a>
+
+            <span class="sortPanel">
+                <label>Order：</label>
+                <a href="#" class="DES active" data-order-by="jiangjin" id="orderByMoney">Award</a>
+                <!--&nbsp;|&nbsp;
+                <a href="#" class="DES init"  data-order-by="shuliang" id="orderByWorkCount">Works count</a>-->
+            </span>
+
+            <input type="text" style="width: 13%" id="searchTitle" class="searchTxt txt wpSearchTxt" placeholder="search title">
+        </div>
+    </div>
+
+    <ul class="itemList" id="topicList">
+        <!--<li class="topic">
+            <a href="s/topic/view/${id}">
+                <h2 class="title" title="${topic.name}">${topic.name}</h2>
+                <p>
+                    <img src="${topic.corpLogo}" class="thumb">
+                    <span class="spanTxt companyName" title="${topic.corpName}">${topic.corpName}</span>
+                </p>
+                <p>
+                    <span class="spanTxt money">&yen;200</span>
+                    <span class="spanTxt right">${topic.category}</span>
+                </p>
+            </a>
+        </li>-->
+
+    </ul>
+</div>
+#include("/en/footer.html")
+</body>
+</html>

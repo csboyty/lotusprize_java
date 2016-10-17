@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    #include("/baseUrl.html")
+
+    #if($success)
+    <meta http-equiv="refresh" content="5;url=http://192.168.2.167:9911/lotusprize/s/login">
+    #else
+    <meta http-equiv="refresh" content="5;url=http://192.168.2.167:9911/lotusprize/s/account/forgetPassword">
+    #end
+
+
+    <link href="css/src/common.css" type="text/css" rel="stylesheet">
+
+</head>
+<body>
+
+#parse("/loginHeader.html")
+
+<div class="content messageContent">
+    #if($success)
+        密码激活成功，5秒后跳转到<a href="s/login" class="txtGreen">登录</a>！
+    #else
+        邮件已失效，密码激活失败，5秒后跳转到<a href="s/account/forgetPassword" class="txtGreen">忘记密码</a>！
+    #end
+</div>
+</body>
+</html>

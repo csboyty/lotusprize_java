@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    #include("/baseUrl.html")
+    <!--<meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <base id="baseUrl" href="http://localhost/lotusprizeWeb2014/">-->
+
+    <link type="text/css" rel="stylesheet" href="css/lib/jquery.toastmessage.css">
+    <link type="text/css" rel="stylesheet" href="css/lib/jquery.dataTables.css">
+    <link type="text/css" rel="stylesheet" href="css/src/common.css">
+    <script type="text/javascript" src="js/lib/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/lib/juicer-min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.toastmessage.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="js/src/config.js"></script>
+    <script type="text/javascript" src="js/src/admin/topicMgr.js"></script>
+    <script>
+        var href="s/topic/mgr";
+        var stage="${stage}";
+    </script>
+</head>
+<body>
+
+<script type="text/template" id="judgeTrTpl">
+    {@each rows as row}
+    <tr>
+        <td class="checkTd"><input class="checkJudgeRow" type="checkbox"></td>
+        <td class="idTd checkTd">${row.id}</td>
+        <td>${row.fullname}</td>
+        <td class="titleTd">${row.organization}</td>
+    </tr>
+    {@/each}
+</script>
+<script type="text/template" id="judgeTpl">
+    <a class="editJudge txtGreen title" title="${judgeNames}" data-judge-ids="${judgeIds}" data-round="${round}" href="#">${judgeNames}</a>
+</script>
+
+#parse("/header.html")
+
+<section class="main">
+
+    #include("/admin/adminMenu.html")
+
+    <article class="content">
+        <section>
+            <div class="row">
+                <input type="text" class="searchTxt txt" id="searchTitle" placeholder="搜索选题">
+                <span class="sortPanel">
+                    <label>排序：</label>
+                    <a href="#" class="DES active" data-order-by="jiangjin" id="orderByMoney">奖金额度</a>
+                    &nbsp;|&nbsp;
+                    <a href="#" class="DES init"  data-order-by="shuliang" id="orderByWorkCount">作品数量</a>
+                </span>
+            </div>
+
+            <div class="row">
+                <label>参赛类别：</label>
+                <a href="#" class="category active" data-category="">全部分类</a>
+                &nbsp;|&nbsp;
+                <a href="#" class="category" data-category="1">A1 数字化制造与设计创新</a>
+                &nbsp;|&nbsp;
+                <a href="#" class="category" data-category="2">A2 智能产品与服务设计创新</a>
+                &nbsp;|&nbsp;
+                <a href="#" class="category" data-category="3">B 社会化服务设计创新</a>
+            </div>
+
+            <div class="row">
+                #if($stage==5)
+                    <button class="btn setExpert" data-round=1>为所选设置一轮评委</button>
+                #end
+                #if($stage==7)
+                    <button class="btn setExpert" data-round=2>为所选设置二轮评委</button>
+                #end
+            </div>
+        </section>
+        <section>
+            #if($stage==1)
+            <div class="row">
+                <a class="btn" href="s/topic/create">新建选题</a>
+            </div>
+            #end
+
+            <table id="topicTable">
+                <thead>
+                <tr>
+                    <th><input type="checkbox" id="checkAll"></th>
+                    <th>标题</th>
+                    <th>企业</th>
+                    <th>奖金</th>
+                    <th>作品数</th>
+                    <th>类别</th>
+                    <th>一轮评委</th>
+                    <th>二轮评委</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!--<tr>
+                    <td><input class="checkRow" type="checkbox"></td>
+                    <td>dddddddd</td>
+                    <td>dddddddd</td>
+                    <td>dddddddd</td>
+                    <td>
+                        <select class="setTopicStatus rowSelect">
+                            <option value="">请选择</option>
+                            <option value="d">d</option>
+                        </select>
+                    </td>
+                    <td>298</td>
+                    <td><a href="#" class="check">查看</a></td>
+                </tr>-->
+                </tbody>
+            </table>
+        </section>
+    </article>
+</section>
+
+<!--设置评委-->
+<div id="popWindow" class="popWindow hidden">
+    <div class="toolbar">
+        <a href="#" id="closePopWindow">关闭</a>
+    </div>
+    <div class="detailPageInfo">
+        <label class="labelTxt">已选评委（<span id="selectedJudgeCount">0</span>）个</label>
+        <input type="hidden" id="selectJudgeRound">
+        <table class="dataTable" id="judgeTable">
+            <thead>
+            <tr>
+                <th class="checkTd"><!--<input type="checkbox" id="checkAllJudge">--></th>
+                <th class="idTd checkTd">ID</th>
+                <th>姓名</th>
+                <th class="titleTd">公司</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+        <div class="row">
+            <button class="btn" id="selectJudgeOk">确认</button>
+        </div>
+    </div>
+</div>
+
+#include("/footer.html")
+</body>
+</html>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd">
+
+    <bean id="kaptchaConfig" class="com.google.code.kaptcha.util.Config">
+        <constructor-arg>
+            <util:properties>
+                <prop key="kaptcha.border">no</prop>
+                <prop key="kaptcha.image.width">140</prop>
+                <prop key="kaptcha.image.height">40</prop>
+                <prop key="kaptcha.textproducer.font.size">32</prop>
+                <prop key="kaptcha.textproducer.font.color">black</prop>
+                <prop key="kaptcha.textproducer.char.length">4</prop>
+                <prop key="kaptcha.textproducer.char.space">5</prop>
+                <prop key="kaptcha.noise.impl">com.google.code.kaptcha.impl.NoNoise</prop>
+                <prop key="kaptcha.obscurificator.impl">com.google.code.kaptcha.impl.ShadowGimpy</prop>
+                <prop key="kaptcha.textproducer.char.string">acde2345678gfynmnprswx</prop>
+            </util:properties>
+        </constructor-arg>
+    </bean>
+</beans>

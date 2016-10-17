@@ -1,0 +1,188 @@
+.judgeNorm{
+    border-radius: 5px;
+    margin:0px 2%;
+    background: #fff;
+}
+.judgeNormTitle{
+    background: #00A67F;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    height: 60px;
+    line-height: 60px;
+    text-align: center;
+    color: #fff;
+    font-size: 22px;
+    margin: 0px;
+}
+.judgeNormList{
+    font-size: 0px;
+    padding:0px 2%;
+}
+.judgeNormItem{
+    display: inline-block;
+    width: 25%;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    padding:2%;
+    vertical-align: top;
+}
+.judgeNormItem .title{
+    color: #00A67F;
+    font-size: 20px;
+    margin: 0px;
+}
+.judgeNormItem .proportion{
+    font-size: 30px;
+    margin-right: 10px;
+}
+.judgeNormItem .abstract{
+    font-size: 14px;
+}
+.judgeTip{
+    text-align: center;
+    color: #666;
+    font-size: 16px;
+    font-weight: bold;
+}
+.judgeTopicCount{
+    font-size: 22px;
+    color: #00A67F;
+    margin:0px 10px;
+}
+
+/**
+*评审页面元素
+*/
+.topicDetail2{
+    height: 0px;
+}
+.countContainer{
+    width: auto;
+    border-radius:0px 0px 5px 5px;
+    background: #00A67F;
+    color:#fff;
+    position: absolute;
+    top:250px;
+    left:70%;
+    height: 50px;
+    padding:10px;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    font-size: 20px;
+    line-height: 30px;
+    text-align: center;
+}
+.countContainer2{
+    top:150px;
+}
+.pageItem{
+    display: block;
+    width: 86px;
+    height: 40px;
+    line-height: 40px;
+    background: url(../../../images/app/prevBtn.png) no-repeat;
+    font-size: 14px;
+    color: #fff;
+    text-align: center;
+    padding-left:12px;
+    position: fixed;
+    top:150px;
+    /*z-index: 10000;*/
+    left:15%;
+    margin-left:-89px;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+.nextWork{
+    padding-left: 0px;
+    padding-right: 12px;
+    background: url(../../../images/app/nextBtn.png) no-repeat;
+    left:85%;
+    margin-left: -13px;
+}
+.judgeContainer{
+    width: 14%;
+    background: #00A67F;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    color:#fff;
+    padding: 15px;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    position: fixed;
+    top:200px;
+    left:85%;
+    margin-left: -13px;
+}
+.judgeContainer p{
+    margin: 10px 0px;
+    position: relative;
+}
+.judgeContainer .scoreTitle{
+    font-size: 18px;
+}
+.judgeContainer .score{
+    font-family: "Georgia","Arail";
+    font-size: 60px;
+    border-bottom: 1px solid #ccc;
+    font-weight: bold;
+    text-align: center;
+    height: 60px;
+    line-height: 60px;
+    padding-bottom: 10px;
+    margin:-10px 0px 0px 0px;
+}
+
+.judgeContainer .scoreInput{
+    height: 30px;
+    border:1px solid #ccc;
+    width: 100%;
+    padding:5px;
+    background: #f8f8f8;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+.judgeContainer .scoreBtn{
+    position: absolute;
+    top:0px;
+    right:0px;
+    width: 60px;
+    height: 30px;
+    border:1px solid #ccc;
+    background: #f8f8f8;
+    cursor: pointer;
+    color: #00A67F;
+}
+.judgeContainer .scoreTip{
+    color: #eee;
+    font-size: 10px;
+}
+.judgeContainer .normTitle{
+    font-size: 18px;
+    margin-top: 20px;
+}
+.judgeContainer .percent{
+    position: absolute;
+    right: 0px;
+}
+.row .queryItem:hover,.row .queryItem.active{
+    color:#00A67F;
+    cursor: pointer;
+}
+.workInfo .author,.workInfo .organization{
+    display: none;
+}
+
+/*
+*hack
+*/
+@-moz-document url-prefix() {
+    .judgeNormItem{
+        margin-left:-1px;
+    }
+}

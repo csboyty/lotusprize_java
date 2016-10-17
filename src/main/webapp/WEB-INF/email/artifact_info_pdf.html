@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lotus Prize</title>
+<style>
+@page { 
+size: 420mm 297mm; 
+border: none;
+}
+body{ font-family:STZhongsong,Verdana;margin:0;}
+ul,li{margin:0;padding:0; list-style:none;}
+a{ text-decoration:none; font-family:STZhongsong,Verdana;}
+p{margin:0;padding:0;}
+img{padding:0;margin:0;border:none;}
+.contain{overflow:hidden;zoom:1; height:700px;position:relative;}
+.leftbox{width:960px;}
+.rightbox{width:300px;position:absolute;right:0;top:0px; border-left:1px dotted #DDD; padding:76px 0 0 20px; height:700px;background:#fff;}
+
+.logo{ margin:15px 0 0 25px;}
+hr{ background:url(file:///C:/Users/zzy/workspace/lotusprize/src/main/webapp/images/app/border.png) repeat-x; height:9px; border:0;}
+.leftbox ul{ margin-top:70px;}
+.leftbox li{ overflow:hidden;zoom:1;margin:40px 0px 40px 5px;}
+.leftbox b{text-align: right;width:240px;color: #33cc99;display: block;float: left;font-size: 16px; font-weight:normal;}
+.leftbox span{display: block;float: left;color:#333; font-size:18px;}
+.leftbox li.pbox b{ height:200px;}
+
+.rightbox li{margin-bottom:25px;}
+.rightbox b{color: #33cc99;font-size: 16px; font-weight:normal;}
+.rightbox p{color:#999; font-size:18px; margin-top:8px;}
+.fly {
+     font-family: STZhongsong;margin:0;
+} 
+
+</style>
+</head>
+<body>
+<div class="contain">
+<div class="leftbox">
+   <img class="logo" src="file:///C:/Users/zzy/workspace/lotusprize/src/main/webapp/images/app/logo.png" />
+   <hr />
+    <ul>
+    <li><b>作品名称/Title：</b><span>$lotusprizeTool.escapeXml(${artifact.title})</span></li>
+    <li><b>作品ID/ID：</b><span>${artifact.id}</span></li>
+    <li><b>作品选题/Topic：</b><span>$lotusprizeTool.escapeXml(${artifact.topicName})</span></li>
+    <li class="pbox"><b>设计说明/Descriptions：</b><p style="float:left;color:#999; font-size:18px;width:665px; line-height:24px;white-space:normal;word-break:break-all;word-wrap : break-word">$lotusprizeTool.escapeXml(${artifact.description})</p></li>
+    </ul>
+</div>
+#if ($showAuthorInfo)
+<div class="rightbox">
+	<ul>
+    <li><b>设计师/Designer:</b><p>$lotusprizeTool.escapeXml(${author.fullname})</p></li>
+    <li><b>邮箱/Email:</b><p>$lotusprizeTool.escapeXml(${author.email})</p></li>
+    <li><b>组织/Organization:</b><p>$lotusprizeTool.escapeXml(${author.accountProfile.organization})</p></li>
+    <li><b>电话/Mobile:</b><p>$lotusprizeTool.escapeXml(${author.mobile})</p></li>
+    <li><b>地址/Address:</b><p>$lotusprizeTool.escapeXml(${author.address})</p></li>
+    <li><b>源文件/Attachment:</b><a href="$lotusprizeTool.escapeUrlPath(${artifact.attachment})">下载/Download</a></li>
+    </ul>
+</div>
+#end
+</div>
+</body>
+
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    #include("/baseUrl.html")
+    <!--<meta charset="utf-8">
+    <base id="baseUrl" href="http://localhost/lotusprizeWeb2014/">
+    <title>2014第四届“芙蓉杯”国际工业设计创新大赛</title>
+    <link rel="shortcut icon" href="images/app/favicon.png" mce_href="images/app/favicon.png" type="image/x-png">-->
+
+    <link type="text/css" rel="stylesheet" href="css/src/common.css">
+    <link type="text/css" rel="stylesheet" href="css/src/judge/main.css">
+    <script type="text/javascript" src="js/lib/jquery-1.7.1.min.js"></script>
+    <!--[if lte IE 9]>
+    <script src="js/lib/html5.js"></script>
+    <![endif]-->
+    <script type="text/javascript" src="js/src/config.js"></script>
+    <script>
+        var href="";
+    </script>
+</head>
+<body>
+
+#parse("/header.html")
+
+<div class="content topicViewContent">
+    <!--<div>
+        <div class="row">
+            <input type="text" id="searchTitle" class="searchTxt txt" placeholder="搜索标题">
+            <span class="sortPanel">
+                <label>排序：</label>
+                <a href="#" class="DES active" data-order-by="jiangjin" id="orderByMoney">奖金额度</a>
+                &nbsp;|&nbsp;
+                <a href="#" class="DES init"  data-order-by="shuliang" id="orderByWorkCount">作品数量</a>
+            </span>
+        </div>
+
+        <div class="row">
+            <label>参赛类别：</label>
+            <a href="#" class="category" data-category="1">A1 数字化制造与设计创新</a>
+            &nbsp;|&nbsp;
+            <a href="#" class="category" data-category="2">A2 智能产品与服务设计创新</a>
+            &nbsp;|&nbsp;
+            <a href="#" class="category" data-category="3">B 社会化服务设计创新</a>
+        </div>
+    </div>-->
+    <p class="judgeTip">
+        尊敬的${expertName}，欢迎参与芙蓉杯的评审工作，
+        #if($stage==6||$stage==8)
+            #if($stage==6)
+            现在开始第一阶段“创新设计优秀奖”作品评审。
+            #else
+            现在开始第二阶段“孵化项目评选及工作营”作品评审。
+            #end
+        当前您有<span class="judgeTopicCount">$!{expertTopics.size()}</span>个命题需要评审。
+        #else
+        当前为非评审阶段，您不能给作品评审，但是可以查看之前的打分。
+        #end
+    </p>
+    <div class="judgeNorm">
+        <h3 class="judgeNormTitle">评审标准</h3>
+        <ul class="judgeNormList">
+            <li class="judgeNormItem">
+                <h4 class="title"><span class="proportion">40%</span>应用性</h4>
+                <p class="abstract">把命题企业应用作为重要的评审标准，能够为企业转化应用、适合工业化批量生产制造。</p>
+            </li>
+            <li class="judgeNormItem">
+                <h4 class="title"><span class="proportion">20%</span>创新性</h4>
+                <p class="abstract">有效利用新技术、新材料、新工艺；概念独特新颖、能提供新的问题解决方案；能引领制造业、
+                    信息化、智能化产品及服务设计发展趋势。</p>
+            </li>
+            <li class="judgeNormItem">
+                <h4 class="title"><span class="proportion">20%</span>经济性</h4>
+                <p class="abstract">符合当代技术发展趋势，综合高效利用社会和环境资源，具有较高的商业价值和市场潜力、
+                    高性价比的设计与商业模式创新。</p>
+            </li>
+            <li class="judgeNormItem">
+                <h4 class="title"><span class="proportion">20%</span>环保性</h4>
+                <p class="abstract">绿色、低碳、节能、新能源；考虑生态兼容性、对社会及环境的洞察力、思考力和责任，
+                    适应于两型社会可持续发展的原则。</p>
+            </li>
+        </ul>
+    </div>
+    <!--<p class="judgeTip">
+
+    </p>-->
+    <ul class="itemList" id="topicList">
+        #if($stage>=8)
+            #foreach($c in $expertTopicsByCategory)
+            <li class="item">
+                <a href="s/expert/topic/${c.category}?categoryStatus=${c.cnt},${c.scoredCnt}">
+                    <img src="data/category${velocityCount}.jpg" class="thumb">
+                    <p class="infoRow">
+                        <span class="spanTxt">作品数：${c.cnt}</span>
+                        <span class="spanTxt money right">已评：${c.scoredCnt}</span>
+                    </p>
+                    <p  class="infoRow lastInfoRow">
+
+                        #if($c.category=="1")
+                            <span class="title spanTxt" title="数字化制造与设计创新">
+                                数字化制造与设计创新
+                            </span>
+                        #elseif($c.category=="2")
+                            <span class="title spanTxt" title="智能产品与服务设计创新">
+                                 智能产品与服务设计创新
+                            </span>
+                        #elseif($c.category=="3")
+                            <span class="title spanTxt" title="社会创新">
+                                 社会创新
+                            </span>
+                        #end
+
+                        <span class="spanTxt right">
+                            #if($c.category=="1")
+                                A1
+                            #elseif($c.category=="2")
+                                A2
+                            #elseif($c.category=="3")
+                                B
+                            #end
+                        </span>
+                    </p>
+                </a>
+            </li>
+            #end
+        #else
+            #foreach($topic in $expertTopics)
+            <li class="item">
+                <a href="s/expert/topic/${topic.topicId}">
+                    <img src="${topic.topicProfile}" class="thumb">
+                    <p class="infoRow">
+                        <span class="spanTxt">作品数：${topic.cnt}</span>
+                        <span class="spanTxt money right">已评：${topic.scoredCnt}</span>
+                    </p>
+                    <p  class="infoRow lastInfoRow">
+                        <span class="title spanTxt" title="${topic.topicName}">${topic.topicName}</span>
+                        <span class="spanTxt right">
+                            #if($topic.topicCategory=="1")
+                                A1
+                            #elseif($topic.topicCategory=="2")
+                                A2
+                            #elseif($topic.topicCategory=="3")
+                                B
+                            #end
+                        </span>
+                    </p>
+                </a>
+            </li>
+            #end
+        #end
+
+
+    </ul>
+</div>
+#include("/footer.html")
+</body>
+</html>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd">
+
+    <context:property-placeholder location="classpath:/mail.properties" ignore-unresolvable="true"/>
+
+    <bean id="javaMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="${mail.host}"/>
+        <property name="username" value="${mail.username}"/>
+        <property name="password" value="${mail.password}"/>
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.smtp.auth">${mail.smtp.auth}</prop>
+                <prop key="mail.smtp.starttls.enable">${mail.smtp.starttls.enable}</prop>
+                <prop key="mail.smtp.timeout">${mail.smtp.timeout}</prop>
+                <prop key="mail.encoding">${mail.encoding}{</prop>
+                <prop key="mail.smtp.ssl.socketFactory">#{mailSSLSocketFactory}</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="mailSSLSocketFactory" class="com.sun.mail.util.MailSSLSocketFactory">
+		<property name="trustAllHosts" value="true" />
+	</bean>
+
+    <bean id="emailSendExecutor" class="com.zhongyi.lotusprize.email.EmailSendExecutor">
+        <constructor-arg index="0" value="${mail.from}"/>
+        <constructor-arg index="1" ref="javaMailSender"/>
+    </bean>
+    
+     <bean id="emailVelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+        <property name="resourceLoaderPath" value="/WEB-INF/email"/>
+        <property name="velocityProperties">
+            <util:properties>
+                <prop key="input.encoding">UTF-8</prop>
+                <prop key="output.encoding">UTF-8</prop>
+                <prop key="file.resource.loader.cache">true</prop>
+                <prop key="file.resource.loader.modificationCheckInterval">30</prop>
+            </util:properties>
+        </property>
+    </bean>
+    
+    <bean id="emailBuilder" class="com.zhongyi.lotusprize.email.EmailBuilder">
+    	 <constructor-arg index="0" ref="emailVelocityEngine"/>
+    </bean>
+
+
+</beans>                           

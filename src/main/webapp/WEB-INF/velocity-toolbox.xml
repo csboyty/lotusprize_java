@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<toolbox>
+
+	<tool>
+		<key>dateTool</key>
+		<scope>application</scope>
+		<class>org.apache.velocity.tools.generic.DateTool</class>
+	</tool>
+
+ 	<tool>
+		<key>escapeTool</key>
+		<scope>application</scope>
+		<class>org.apache.velocity.tools.generic.EscapeTool</class>
+	</tool>
+
+
+<!-- 	<tool>
+		<key>mathTool</key>
+		<scope>application</scope>
+		<class>org.apache.velocity.tools.generic.MathTool</class>
+	</tool> -->
+
+<!-- 	<tool>
+		<key>cookieTool</key>
+		<scope>request</scope>
+		<class>org.apache.velocity.tools.view.tools.CookieTool</class>
+	</tool> -->
+
+	<tool>
+		<key>numberTool</key>
+		<scope>request</scope>
+		<class>org.apache.velocity.tools.generic.NumberTool</class>
+	</tool>
+
+	<tool>
+		<key>lotusprizeTool</key>
+		<scope>request</scope>
+		<class>com.zhongyi.lotusprize.web.misc.LotusprizeVelocityTool</class>
+	</tool>
+
+</toolbox>

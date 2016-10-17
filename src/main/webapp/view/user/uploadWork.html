@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+    #include("/baseUrl.html")
+    <!--<base href="http://localhost/lotusprizeWeb2014/">-->
+    <link href="css/lib/jquery.toastmessage.css" rel="stylesheet" type="text/css">
+
+    <link href="css/src/common.css" rel="stylesheet" type="text/css">
+    <link href="css/src/user/uploadWork.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="js/lib/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/lib/plupload.js"></script>
+    <script type="text/javascript" src="js/lib/plupload.html5.js"></script>
+    <script type="text/javascript" src="js/lib/plupload.flash.js"></script>
+    <script type="text/javascript" src="js/lib/juicer-min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.form.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.toastmessage.js"></script>
+    <script type="text/javascript" src="js/src/config.js"></script>
+    <script type="text/javascript" src="js/src/user/uploadWork.js"></script>
+    <script>
+        var href="s/user/artifact";
+        var artifactId='$!{artifact.id}';
+    </script>
+</head>
+<body>
+
+<!--模板-->
+<script type="text/template" id="attaTpl">
+    <a href="#" class="attachment" title="${filename}"><input type="hidden" value="${filepath}" name="attachment">${filename}</a>
+</script>
+<script type="text/template" id="mediaTpl">
+    <li>
+        <a class="file" href="${key}">
+            <span draggable="true" class="name" title="${filename}">${filename}</span>
+            <span class="delete">删除</span>
+        </a>
+    </li>
+</script>
+<script type="text/template" id="previewTpl">
+    <!--<input type="submit" class="btn panelTopSubmit" value="提交">-->
+    <article class="workInfo">
+        <header>
+            <span class="topicLabel" title="${workTopic}">参赛选题:&nbsp;${workTopic}</span>
+            <h2 class="title txtGreen">${workTitle}</h2>
+            <p class="organization">院校/组织:&nbsp;${workOrganization}</p>
+            <p class="author">作者:&nbsp;${workAuthor}</p>
+        </header>
+        <p class="description">${workDescription}</p>
+
+        {@each medias as media}
+        <figure class="workAttachment">
+            <img src="${media.image}">
+            <figcaption class="attaDescription">
+                ${media.text}
+            </figcaption>
+        </figure>
+        {@/each}
+
+
+    </article>
+    <!--<div class="row marginTopMore">
+        <input type="checkbox" checked id="agree" name="agree"><label>本人同意本次比赛的
+        <a href="#" target="_blank" class="txtGreen">协议</a></label>
+    </div>-->
+    <div class="txtRight">
+        <input type="button" value="上一步" id="step3ToStep2" class="btn">
+        <input type="submit" value="提交" class="btn">
+    </div>
+</script>
+
+#parse("/header.html")
+
+<section class="main">
+    #parse("/user/userMenu.html")
+
+    <article class="content frontContent">
+        <header class="pageHeader">
+            <ul class="step" id="step">
+                <li class="active">1.基本信息</li>
+                <li >2.图片</li>
+                <li>3.预览提交</li>
+            </ul>
+        </header>
+        <form action="s/user/artifact/createOrUpdate" method="post" id="uploadWorkForm">
+            <input type="hidden" name="artifactId" value="$!{artifact.id}">
+            <input type="hidden" name="topicId" value="$!{topicId}">
+
+            #if($artifact.id)
+            <input type="hidden" id="workOrganization" name="organization" value="$!{artifact.organization}">
+            #else
+            <input type="hidden" id="workOrganization" name="organization" value="$!{organization}">
+            #end
+
+            <section id="step1" class="stepPanel">
+                <div class="row">
+                    <label class="labelTxt">参与选题</label>
+                    <label class="labelTxt topicLabel" id="workTopic" title="$!{topicName}">$!{topicName}</label>
+                </div>
+                <div class="row">
+                    <label class="labelTxt" for="workTitle">标题</label>
+                    #if($artifact.title)
+                    <input class="txt" id="workTitle" type="text" name="title" maxlength="512" value="$escapeTool.html(${artifact.title})">
+                    #else
+                    <input class="txt" id="workTitle" type="text" name="title" maxlength="512">
+                    #end
+
+                    <span class="tips">限512字</span>
+                </div>
+                <div class="row">
+                    <label class="labelTxt" for="workDescription">作品说明</label>
+                    <textarea id="workDescription" class="txt txtarea" maxlength="5000"
+                              name="description">$!{artifact.description}</textarea>
+                    <span class="tips">限5000字</span>
+                </div>
+                <div class="row">
+                    <label class="labelTxt">缩略图</label>
+                    <div class="rowContent">
+                        #if($artifact.profile)
+                            #set($profile=$artifact.profile)
+                        #else
+                            #set($profile="images/app/defaultThumb.jpg")
+                        #end
+                        <div id="uploadThumbContainer">
+                            <input type="button" id="uploadThumb" class="btn" value="上传">
+                        </div>
+                        <p>请上传宽高比为1:1的png或者jpg,建议不大于500X500px</p>
+
+                        <img src="${profile}" class="squareImg" id="workThumbShow">
+                        <input type="hidden" id="workThumb" name="profile" value="$!{artifact.profile}">
+
+                    </div>
+                </div>
+
+                <div class="row" id="attachmentRow">
+                    <label class="labelTxt">附件：</label>
+                    <div id="uploadAttachmentContainer" class="asInBlock">
+                        <input type="button" class="btn" id="uploadAttachment" value="上传">
+                    </div>
+                    <a class="tips" id="attachmentRequire" href="#">附件要求</a>
+
+                    #if($artifact.attachment)
+                    <a href="#" class="attachment" title="$lotusprizeTool.getFilename(${artifact.attachment})">
+                        <input type="hidden" value="${artifact.attachment}" name="attachment">
+                        $lotusprizeTool.getFilename(${artifact.attachment})</a>
+                    #end
+                    <!--<a href="#" class="file">theFirstFile<input type="hidden" name="attachment"></a>-->
+
+                </div>
+
+                <div class="row">
+                    <label class="labelTxt" for="workAuthor">作者</label>
+                    #if($artifact.author)
+                    <input class="txt" id="workAuthor" maxlength="128"
+                           type="text" name="author" value="$escapeTool.html(${artifact.author})">
+                    #else
+                    <input class="txt" id="workAuthor" maxlength="128"
+                           type="text" name="author">
+                    #end
+
+                    <span class="tips">限128字</span>
+                    <p class="hasLeftMargin">多个作者请用“;”隔开，最多6个</p>
+                </div>
+
+                <!--<div class="row">
+                    <label class="labelTxt" for="workOrganization">组织/院校</label>
+                    <input class="txt" id="workOrganization" maxlength="256"
+                           type="text" name="organization" required value="$!{artifact.organization}">
+                    <span class="requiredFlag">*</span>
+                    <span class="tips">限256字</span>
+                    <p class="hasLeftMargin">多个组织请用“;”隔开</p>
+                </div>-->
+
+                <div class="row txtRight">
+                    <input type="button" value="下一步" id="step1ToStep2" class="btn">
+                </div>
+            </section>
+
+            <section id="step2" class="stepPanel hidden">
+                <header>
+                    <div id="uploadMediaContainer">
+                        <input type="button" id="uploadMedia" class="btn" value="上传">
+                    </div>
+                    <p>仅限2M以内的jpg、png，最多3张，横向A3大小（1191x842px,72dpi）</p>
+                </header>
+                <ul class="mediaList" id="mediaList">
+
+                    #foreach( $int in $artifact.introduces)
+                    <li>
+                        <a class="file" href="${int.pos}">
+                            <span draggable="true" class="name" title="$lotusprizeTool.getFilename(${int.image})">$lotusprizeTool.getFilename(${int.image})</span>
+                            <span class="delete">删除</span>
+                        </a>
+                    </li>
+                    #end
+                    <!--<li class="active">
+                        <a class="file" href="0">
+                            <span class="name" title="dfasdfadfaf">1</span>
+                            <span class="delete">删除</span>
+                        </a>
+                    </li>-->
+                </ul>
+                <div class="mediaInfoPanel">
+                    <div class="row">
+                        <label class="labelTxt"></label>
+                        <img src="images/app/defaultImg.jpg" id="mediaShow">
+                    </div>
+                   <div class="row">
+                       <label class="labelTxt">说明</label>
+                       <div class="rowContent">
+                           <textarea id="mediaDescription" class="txt txtarea" maxlength="3000"></textarea>
+                           <div>可选,限3000字</div>
+                       </div>
+                   </div>
+                </div>
+                <div class="txtRight">
+                    <input type="button" value="上一步" id="step2ToStep1" class="btn">
+                    <input type="button" value="下一步" id="step2ToStep3" class="btn">
+                </div>
+            </section>
+
+            <section id="step3" class="stepPanel hidden">
+                <!--<input type="submit" class="btn panelTopSubmit" value="提交">
+                <article class="workInfo">
+                    <header>
+                        <span>选题:jdfakjdkfja就对啦咖啡机啊卡到积分阿姐夫的</span>
+
+                        <h2 class="title txtGreen">智能手环外观设计</h2>
+                        <span>湖南大学</span><span class="author">张三，李四，文武</span>
+                    </header>
+                    <p>
+                        “黑匣子”（英文：black box黑盒子）是飞机专用的电子记录设备之一，名为航空飞行记录器。
+                        里面装有飞行数据记录器和舱声录音器，飞机各机械部位和电子仪器仪表都装有传感器与之相连。
+                        它能把飞机停止工作或失事坠毁前半小时的有关技术参数和驾驶舱内的声音记录下来，需要时把所记录的参数重新放出来
+                        ，供飞行实验、事故分析之用。黑匣子具有极强的抗火、耐压、耐冲击振动、耐海水（或煤油）浸泡、抗磁干扰等能力，
+                        即便飞机已完全损坏，黑匣子里的记录数据也能完好保存。世界上大部分的空难原因都是通过黑匣子找出来的。
+                    </p>
+                    <figure class="workAttachment">
+                        <img src="images/app/defaultThumb.jpg">
+                        <figcaption>
+                            “黑匣子”（英文：black box黑盒子）是飞机专用的电子记录设备之一，名为航空飞行记录器。
+                            里面装有飞行数据记录器和舱声录音器，飞机各机械部位和电子仪器仪表都装有传感器与之相连。
+                        </figcaption>
+                    </figure>
+                </article>
+                <div class="row marginTopMore">
+                    <input type="checkbox" required name="agree"><label>本人同意本次比赛的<a href="#" target="_blank" class="txtGreen">协议</a></label>
+                </div>
+                <div class="row txtRight">
+                    <input type="button" value="上一步" id="step3ToStep2" class="btn">
+                    <input type="submit" value="提交" class="btn">
+                </div>-->
+            </section>
+        </form>
+    </article>
+</section>
+
+<!--显示附件要求-->
+<div id="popWindow" class="popWindow positionFixed hidden">
+    <div class="toolbar">
+        <a href="#" id="closePopWindow">关闭</a>
+    </div>
+    <div class="agreementContent" id="agreementContent">
+        <p>1.文件中应包含产品三视图，tiff或png格式无背景，横向，300dpi。</p>
+        <p>2.文件中应包含产品效果图（有背景和无背景各一张），tiff或png格式，A3大小，横向，300dpi。</p>
+        <p>3.附件内容也可以包括辅助解释作品的ppt文档、视频文件。</p>
+        <p>4.附件文件以作品名称命名，采用zip或rar格式,大小小于200M。</p>
+        <p>5.详情请见各选题附件中的说明。</p>
+        <p>说明：文件中的素材用于评审、展览、印刷，必须上传！未上传则视为不符合要求，将影响评分。</p>
+    </div>
+</div>
+
+#include("/footer.html")
+</body>
+</html>

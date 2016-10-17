@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    #include("/baseUrl.html")
+
+    #if($errorCode=="account_active_email_token_not_match"||$errorCode=="account_active_email_expired")
+    <meta http-equiv="refresh" content="5;url=http://192.168.2.167:9911/lotusprize/s/account/register">
+    #else
+    <meta http-equiv="refresh" content="5;url=http://192.168.2.167:9911/lotusprize/s/login">
+    #end
+
+    <link href="css/src/common.css" type="text/css" rel="stylesheet">
+
+</head>
+<body>
+
+#parse("/loginHeader.html")
+
+<div class="content messageContent">
+    #if($errorCode=="account_active_email_token_not_match"||$errorCode=="account_active_email_expired")
+        邮件已失效，邮箱激活失败，5秒后跳转到<a href="s/account/register" class="txtGreen">注册</a>！
+    #else
+        邮箱激活成功，5秒后跳转到<a href="s/login" class="txtGreen">登录</a>！
+    #end
+</div>
+</body>
+</html>

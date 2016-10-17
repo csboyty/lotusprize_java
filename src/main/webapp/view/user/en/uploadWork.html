@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    #include("/en/baseUrl.html")
+    <!--<base href="http://localhost/lotusprizeWeb2014/">-->
+    <link href="css/lib/jquery.toastmessage.css" rel="stylesheet" type="text/css">
+
+    <link href="css/src/common.css" rel="stylesheet" type="text/css">
+    <link href="css/src/user/uploadWork.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="js/lib/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/lib/plupload.js"></script>
+    <script type="text/javascript" src="js/lib/plupload.html5.js"></script>
+    <script type="text/javascript" src="js/lib/plupload.flash.js"></script>
+    <script type="text/javascript" src="js/lib/juicer-min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.form.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.toastmessage.js"></script>
+    <script type="text/javascript" src="js/src/en/config.js"></script>
+    <script type="text/javascript" src="js/src/user/uploadWork.js"></script>
+    <script>
+        var href="s/user/artifact?_lang=en";
+        var artifactId='$!{artifact.id}';
+    </script>
+</head>
+<body class="enBody">
+<!--模板-->
+<script type="text/template" id="attaTpl">
+    <a href="#" class="attachment" title="${filename}"><input type="hidden" value="${filepath}" name="attachment">${filename}</a>
+</script>
+<script type="text/template" id="mediaTpl">
+    <li>
+        <a class="file" href="${key}">
+            <span class="name" draggable="true" title="${filename}">${filename}</span>
+            <span class="delete">delete</span>
+        </a>
+    </li>
+</script>
+<script type="text/template" id="previewTpl">
+    <!--<input type="submit" class="btn panelTopSubmit" value="Submit">-->
+    <article class="workInfo">
+        <header>
+            <span class="topicLabel" title="${workTopic}">Topic:&nbsp;${workTopic}</span>
+
+            <h2 class="title txtGreen">${workTitle}</h2>
+            <p class="organization">Organization:&nbsp;${workOrganization}</p>
+            <p class="author">Author:&nbsp;${workAuthor}</p>
+        </header>
+        <p class="description">${workDescription}</p>
+
+        {@each medias as media}
+        <figure class="workAttachment">
+            <img src="${media.image}">
+            <figcaption class="attaDescription">
+                ${media.text}
+            </figcaption>
+        </figure>
+        {@/each}
+
+
+    </article>
+    <!--<div class="row marginTopMore">
+        <input type="checkbox" id="agree" name="agree" checked>
+        <label>I agree to this game <a href="#" target="_blank" class="txtGreen">agreement</a></label>
+    </div>-->
+    <div class="txtRight">
+        <input type="button" value="The previous step" id="step3ToStep2" class="btn">
+        <input type="submit" value="Submit" class="btn">
+    </div>
+</script>
+
+#parse("/en/header.html")
+
+<section class="main">
+    #parse("/user/en/userMenu.html")
+
+    <article class="content frontContent">
+        <header class="pageHeader">
+            <ul class="step" id="step">
+                <li class="active">1. Information</li>
+                <li >2. Images</li>
+                <li>3. Preview </li>
+            </ul>
+        </header>
+        <form action="s/user/artifact/createOrUpdate" method="post" id="uploadWorkForm">
+            <input type="hidden" name="artifactId" value="$!{artifact.id}">
+            <input type="hidden" name="topicId" value="$!{topicId}">
+            #if($artifact.id)
+            <input type="hidden" id="workOrganization" name="organization" value="$!{artifact.organization}">
+            #else
+            <input type="hidden" id="workOrganization" name="organization" value="$!{organization}">
+            #end
+            <section id="step1" class="stepPanel">
+                <div class="row">
+                    <label class="labelTxt">Topic</label>
+                    <label class="labelTxt topicLabel" id="workTopic" title="$!{topicName}">$!{topicName}</label>
+                </div>
+                <div class="row">
+                    <label class="labelTxt" for="workTitle">Name</label>
+                    #if($artifact.title)
+                    <input class="txt" id="workTitle" type="text" name="title" maxlength="512" value="$escapeTool.html(${artifact.title})">
+                    #else
+                    <input class="txt" id="workTitle" type="text" name="title" maxlength="512">
+                    #end
+                    <span class="tips">Max 512 characters.</span>
+                </div>
+                <div class="row">
+                    <label class="labelTxt" for="workDescription">Description</label>
+                    <textarea id="workDescription" name="description" maxlength="5000"
+                              class="txt txtarea" >$!{artifact.description}</textarea>
+                    <span class="tips">Max 5000 characters.</span>
+                </div>
+                <div class="row">
+                    <label class="labelTxt">Thumbnail</label>
+                    <div class="rowContent">
+                        #if($artifact.profile)
+                            #set($profile=$artifact.profile)
+                        #else
+                            #set($profile="images/app/defaultThumb.jpg")
+                        #end
+                        <div id="uploadThumbContainer">
+                            <input type="button" id="uploadThumb" class="btn" value="Upload">
+                        </div>
+                        <p>Please upload the aspect ratio of 1:1 png or jpg, suggest less than 500x500px.</p>
+                        <img src="${profile}" class="squareImg" id="workThumbShow">
+                        <input type="hidden" id="workThumb" name="profile" value="$!{artifact.profile}">
+                    </div>
+                </div>
+
+                <div class="row" id="attachmentRow">
+                    <label class="labelTxt">Attachment：</label>
+                    <div id="uploadAttachmentContainer" class="asInBlock">
+                        <input type="button" class="btn" id="uploadAttachment" value="Upload">
+                    </div>
+                    <a class="tips" id="attachmentRequire" href="#">Attachment Requirements</a>
+
+                    #if($artifact.attachment)
+                    <a href="#" class="attachment" title="$lotusprizeTool.getFilename(${artifact.attachment})">
+                        <input type="hidden" value="${artifact.attachment}" name="attachment">
+                        $lotusprizeTool.getFilename(${artifact.attachment})</a>
+                    #end
+                    <!--<a href="#" class="file">theFirstFile<input type="hidden" name="attachment"></a>-->
+
+                </div>
+
+                <div class="row">
+                    <label class="labelTxt" for="workAuthor">Author</label>
+                    #if($artifact.author)
+                    <input class="txt" id="workAuthor" maxlength="128"
+                           type="text" name="author" value="$escapeTool.html(${artifact.author})">
+                    #else
+                    <input class="txt" id="workAuthor" maxlength="128"
+                           type="text" name="author">
+                    #end
+                    <span class="tips">Max 128 characters.</span>
+                    <p class="hasLeftMargin">Separate with “;”,no more than 6 authors.</p>
+                </div>
+                <!--<div class="row">
+                    <label class="labelTxt" for="workOrganization">Organization</label>
+                    <input class="txt" id="workOrganization" maxlength="256"
+                           type="text" name="organization" required value="$!{artifact.organization}">
+                    <span class="requiredFlag">*</span>
+                    <span class="tips">Max 256 character</span>
+                    <p class="hasLeftMargin">separate with “;”</p>
+                </div>-->
+
+                <div class="row txtRight">
+                    <input type="button" value="The next step" id="step1ToStep2" class="btn">
+                </div>
+            </section>
+            <section id="step2" class="stepPanel hidden">
+                <header>
+                    <div id="uploadMediaContainer">
+                        <input type="button" id="uploadMedia" class="btn" value="Upload">
+                    </div>
+                    <p>Only jpg/png less than 2M,up to three images,horizontal A3 size(1191x842px,72dpi).</p>
+                </header>
+                <ul class="mediaList" id="mediaList">
+
+                    #foreach( $int in $artifact.introduces)
+                    <li>
+                        <a class="file" href="${int.pos}">
+                            <span  draggable="true" class="name" title="$lotusprizeTool.getFilename(${int.image})">$lotusprizeTool.getFilename(${int.image})</span>
+                            <span class="delete">Close</span>
+                        </a>
+                    </li>
+                    #end
+                    <!--<li class="active">
+                        <a class="file" href="0">
+                            <span class="name" title="dfasdfadfaf">1</span>
+                            <span class="delete">Close</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="file" href="1">
+                            <span class="name" title="dfasdfadfaf">2</span>
+                            <span class="delete">Close</span>
+                        </a>
+                    </li>-->
+                </ul>
+                <div class="mediaInfoPanel">
+                    <div class="row">
+                        <label class="labelTxt"></label>
+                        <img src="images/app/defaultImg.jpg" id="mediaShow">
+                    </div>
+                   <div class="row">
+                       <label class="labelTxt">Instructions</label>
+                       <div class="rowContent">
+                           <textarea id="mediaDescription" class="txt txtarea" maxlength="3000"></textarea>
+                           <div>Optional.Max 3000 characters.</div>
+                       </div>
+                   </div>
+                </div>
+                <div class="txtRight">
+                    <input type="button" value="The previous step" id="step2ToStep1" class="btn">
+                    <input type="button" value="The next step" id="step2ToStep3" class="btn">
+                </div>
+            </section>
+            <section id="step3" class="stepPanel hidden">
+                <!--<input type="submit" class="btn panelTopSubmit" value="Upload">
+                <article class="workInfo">
+                    <header>
+                        <span>Topic selection:jdfakjdkfja就对啦咖啡机啊卡到积分阿姐夫的</span>
+
+                        <h2 class="title txtGreen">Intelligent bracelet designs</h2>
+                        <div class="authorProfileImgs">
+                            <img src="images/app/defaultThumb.jpg" title="this one">
+                            <img src="images/app/defaultThumb.jpg">
+                            <img src="images/app/defaultThumb.jpg">
+                        </div>
+                    </header>
+                    <p>
+                        “黑匣子”（英文：black box黑盒子）是飞机专用的电子记录设备之一，名为航空飞行记录器。
+                        里面装有飞行数据记录器和舱声录音器，飞机各机械部位和电子仪器仪表都装有传感器与之相连。
+                        它能把飞机停止工作或失事坠毁前半小时的有关技术参数和驾驶舱内的声音记录下来，需要时把所记录的参数重新放出来
+                        ，供飞行实验、事故分析之用。黑匣子具有极强的抗火、耐压、耐冲击振动、耐海水（或煤油）浸泡、抗磁干扰等能力，
+                        即便飞机已完全损坏，黑匣子里的记录数据也能完好保存。世界上大部分的空难原因都是通过黑匣子找出来的。
+                    </p>
+                    <figure class="workAttachment">
+                        <img src="images/app/defaultThumb.jpg">
+                        <figcaption>
+                            “黑匣子”（英文：black box黑盒子）是飞机专用的电子记录设备之一，名为航空飞行记录器。
+                            里面装有飞行数据记录器和舱声录音器，飞机各机械部位和电子仪器仪表都装有传感器与之相连。
+                        </figcaption>
+                    </figure>
+                </article>
+                <div class="row marginTopMore">
+                    <input type="checkbox" required name="agree"><label>I agree to this game<a href="#" target="_blank" class="txtGreen">agreement</a></label>
+                </div>
+                <div class="row txtRight">
+                    <input type="button" value="The previous step" id="step3ToStep2" class="btn">
+                    <input type="submit" value="Submit" class="btn">
+                </div>-->
+            </section>
+        </form>
+    </article>
+</section>
+
+<!--显示附件要求-->
+<div id="popWindow" class="popWindow positionFixed hidden">
+    <div class="toolbar">
+        <a href="#" id="closePopWindow">Close</a>
+    </div>
+    <div class="agreementContent" id="agreementContent">
+        <p>1.The file should include orthographic view, tiff or png file with no background, landscape, 300dpi.</p>
+        <p>2.The file should include product scenario renderings with and without background (one of each), tiff or png file, A3 size, landscape, 300dpi.</p>
+        <p>3.You may also attach supplementary materials such as PPT and videos files in your submission.</p>
+        <p>4.The file should be named as the product name , using zip or rar file, no larger than 200mb.</p>
+        <p>5.Details are described in the annex to each topic.</p>
+        <p>NB: The above files must be submitted and may be used for judging, exhibition and printing purposes.
+            Entries that does not reach submission requirements will affect their scoring.</p>
+    </div>
+</div>
+
+#include("/en/footer.html")
+</body>
+</html>

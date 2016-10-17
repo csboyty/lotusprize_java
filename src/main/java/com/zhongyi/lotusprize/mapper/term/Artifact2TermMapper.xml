@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.zhongyi.lotusprize.mapper.term.Artifact2TermMapper">
+
+	<insert id="insertArtifact2Term" parameterType="com.zhongyi.lotusprize.domain.term.Artifact2Term">
+		INSERT INTO artifact_2_term(a2t_artifact_id,a2t_term_id,a2t_term_attach_account_id,a2t_term_attach_time)
+		VALUES(#{artifactId,jdbcType=INTEGER},#{termId,jdbcType=INTEGER},#{termAttachAccountId,jdbcType=INTEGER},#{termAttachTime,jdbcType=TIMESTAMP})
+	</insert>
+	
+	<delete id="deleteByArtifactIdAndTermId">
+		DELETE FROM artifact_2_term where a2t_artifact_id=#{artifactId} AND a2t_term_id=#{termId}
+	</delete>
+
+</mapper>        
+        

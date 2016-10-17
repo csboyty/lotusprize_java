@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    #include("/baseUrl.html")
+    <!--<base href="http://localhost/lotusprizeWeb2014/">-->
+
+    <link type="text/css" rel="stylesheet" href="css/lib/jquery.toastmessage.css">
+    <link type="text/css" rel="stylesheet" href="css/lib/jquery.dataTables.css">
+    <link type="text/css" rel="stylesheet" href="css/src/common.css">
+    <script type="text/javascript" src="js/lib/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/lib/juicer-min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.toastmessage.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="js/src/config.js"></script>
+    <script type="text/javascript" src="js/src/admin/userMgr.js"></script>
+    <script>
+        var href="s/admin/user/userManage";
+    </script>
+</head>
+<body>
+
+#parse("/header.html")
+
+<section class="main">
+
+    #include("/admin/adminMenu.html")
+
+    <article class="content">
+        <section>
+            <div class="row">
+                <input type="text" class="searchTxt txt" id="searchContent" placeholder="搜索姓名/邮箱">
+            </div>
+            <div class="row">
+                <label>角色：</label>
+                <a href="#" class="role" data-role="user">普通用户</a>
+                &nbsp;|&nbsp;
+                <a href="#" class="role" data-role="topicManager">企业用户</a>
+                &nbsp;|&nbsp;
+                <a href="#" class="role" data-role="expert">评委</a>
+            </div>
+        </section>
+        <section>
+            <div class="row">
+                <a class="btn" href="s/admin/user/createTopicManager">新建企业用户</a>
+                <a class="btn" href="s/admin/user/createExpert">新建评委</a>
+            </div>
+            <table id="userTable">
+                <thead>
+                <tr>
+                    <th>姓名</th>
+                    <th>邮箱</th>
+                    <th>电话</th>
+                    <th>组织/企业</th>
+                    <th>类型</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!--<tr>
+                    <td><input class="checkRow" type="checkbox"></td>
+                    <td>dddddddd</td>
+                    <td>dddddddd</td>
+                    <td>dddddddd</td>
+                    <td>
+                        <select class="setTopicStatus rowSelect">
+                            <option value="">请选择</option>
+                            <option value="d">d</option>
+                        </select>
+                    </td>
+                    <td>298</td>
+                    <td><a href="#" class="check">查看</a></td>
+                </tr>-->
+                </tbody>
+            </table>
+        </section>
+    </article>
+</section>
+
+<!--显示评审记录-->
+<div id="popWindow" class="popWindow hidden">
+    <div class="toolbar">
+        <a href="#" id="closePopWindow">关闭</a>
+    </div>
+
+    <div class="detailPageInfo">
+        <div class="row">
+            <label>评审轮数</label>
+            <select id="roundSelect">
+                <option value="1">第一轮</option>
+                <option value="2">第二轮</option>
+            </select>
+        </div>
+
+        <table class="dataTable" id="judgeRecordTable">
+            <thead>
+            <tr>
+                <th class="idTd checkTd">选题</th>
+                <th>已评作品</th>
+                <th class="titleTd">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+#include("/footer.html")
+
+</body>
+</html>

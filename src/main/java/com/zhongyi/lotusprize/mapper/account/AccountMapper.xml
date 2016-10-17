@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zhongyi.lotusprize.mapper.account.AccountMapper">
+
+    <resultMap id="accountMap" type="com.zhongyi.lotusprize.domain.account.Account">
+        <id column="a_id" jdbcType="INTEGER" property="id" />
+        <result column="a_fullname" jdbcType="VARCHAR" property="fullname" />
+        <result column="a_email" jdbcType="VARCHAR" property="email" />
+        <result column="a_mobile" jdbcType="VARCHAR" property="mobile" />
+        <result column="a_address" jdbcType="VARCHAR" property="address" />
+        <result column="a_status" jdbcType="CHAR" property="status" />
+        <result column="a_role" jdbcType="INTEGER" property="roleValue" />
+    </resultMap>
+
+    <resultMap id="accountSecretMap" type="com.zhongyi.lotusprize.domain.account.AccountSecret">
+        <result column="as_password" jdbcType="VARCHAR" property="password" />
+        <result column="as_password_salt" jdbcType="VARCHAR" property="passwordSalt" />
+    </resultMap>
+
+    <resultMap id="accountProfileMap" type="com.zhongyi.lotusprize.domain.account.AccountProfile">
+        <result column="ap_gender" jdbcType="TINYINT" property="gender" />
+        <result column="ap_memo" jdbcType="VARCHAR" property="memo" />
+        <result column="ap_organization" jdbcType="VARCHAR" property="organization" />
+    </resultMap>
+    
+    <resultMap id="accountWithSecretMap" extends="accountMap" type="com.zhongyi.lotusprize.domain.account.Account">
+        <association property="accountSecret" resultMap="accountSecretMap" />
+    </resultMap>
+    
+     <resultMap id="accountWithProfileMap" extends="accountMap" type="com.zhongyi.lotusprize.domain.account.Account">
+        <association property="accountProfile" resultMap="accountProfileMap" />
+    </resultMap>
+    
+
+
+    <select id="loadAccountWithSecretByEmail" parameterType="java.lang.String" resultMap="accountWithSecretMap">
+        SELECT a_id,a_fullname,a_email,a_mobile,a_address,a_status,a_role,as_password,as_password_salt
+        FROM account INNER JOIN account_secret ON account.a_id=account_secret.as_account_id
+        WHERE account.a_email=#{email}
+    </select>
+    
+    <select id="loadAccountWithSecretByAccountId" parameterType="java.lang.Integer" resultMap="accountWithSecretMap">
+    	SELECT a_id,a_fullname,a_email,a_mobile,a_address,a_status,a_role,as_password,as_password_salt
+        FROM account INNER JOIN account_secret ON account.a_id=account_secret.as_account_id
+        WHERE account.a_id=#{accountId}
+    </select>
+    
+   	<select id="loadAccountWithProfileByAccountId" parameterType="java.lang.Integer" resultMap="accountWithProfileMap">
+   		SELECT a_id,a_fullname,a_email,a_mobile,a_address,a_status,a_role,ap_gender,ap_memo,ap_organization
+        FROM account LEFT JOIN account_profile ON account.a_id=account_profile.ap_account_id
+   		WHERE a_id=#{accountId}
+   	</select>
+   	
+   	<select id="iterAccountWithProfile"  resultMap="accountWithProfileMap">
+   		SELECT a_id,a_fullname,a_email,a_mobile,a_address,a_status,a_role,ap_gender,ap_memo,ap_organization
+        FROM account LEFT JOIN account_profile ON account.a_id=account_profile.ap_account_id
+   		WHERE account.a_id &gt;#{baseAccountId} ORDER BY account.a_id ASC LIMIT ${limit}
+   	</select>
+   	
+  
+    
+    <insert id="insertAccount" parameterType="com.zhongyi.lotusprize.domain.account.Account">
+        <selectKey resultType="java.lang.Integer" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO account(a_fullname,a_email,a_mobile,a_address,a_status,a_role)
+        VALUES(#{fullname,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{mobile,jdbcType=VARCHAR},#{address,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},#{roleValue,jdbcType=INTEGER})
+    </insert>
+    
+    <update id="updateAccount" parameterType="com.zhongyi.lotusprize.domain.account.Account">
+    	UPDATE account set a_fullname=#{fullname,jdbcType=VARCHAR},a_mobile=#{mobile,jdbcType=VARCHAR},a_address=#{address,jdbcType=VARCHAR}
+    	WHERE a_id=#{id}
+    </update>
+    
+    <delete id="deleteAccountById" parameterType="java.lang.Integer">
+    	delete from account where a_id=#{id}
+    </delete>
+    
+    
+    <insert id="insertOrUpdateAccountProfile">
+        INSERT INTO account_profile(ap_account_id,ap_gender,ap_memo,ap_organization)
+        VALUES(#{accountId,jdbcType=INTEGER},#{accountProfile.gender,jdbcType=TINYINT},#{accountProfile.memo,jdbcType=VARCHAR},#{accountProfile.organization,jdbcType=VARCHAR})
+        ON DUPLICATE KEY UPDATE
+        ap_gender=#{accountProfile.gender,jdbcType=TINYINT},ap_memo=#{accountProfile.memo,jdbcType=VARCHAR},ap_organization=#{accountProfile.organization,jdbcType=VARCHAR}
+    </insert>
+
+	
+	
+
+    <insert id="insertOrUpdateAccountSecret">
+        INSERT INTO account_secret(as_account_id,as_password,as_password_salt)
+        VALUES(#{accountId,jdbcType=INTEGER},#{accountSecret.password,jdbcType=VARCHAR},#{accountSecret.passwordSalt,jdbcType=VARCHAR})
+        ON DUPLICATE KEY UPDATE
+        as_password=#{accountSecret.password,jdbcType=VARCHAR},as_password_salt=#{accountSecret.passwordSalt,jdbcType=VARCHAR}
+    </insert>
+    
+    <select id="accountRoleByAccountId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    	select a_role from account where a_id=#{accountId}
+    </select>
+    
+    <select id="countBy" resultType="java.lang.Integer">
+    	select count(a_id) from account
+    	<trim prefix="WHERE" prefixOverrides="AND |OR">
+			a_role != 1
+			<if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(fullnameOrEmail)">
+				AND (a_fullname like #{fullnameOrEmail} OR  a_email like #{fullnameOrEmail})
+			</if>
+			<if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(roleValue)">
+				AND a_role = #{roleValue}
+			</if>
+		</trim>
+    </select>
+    
+    <select id="findAccountIdBy" resultType="java.lang.Integer">
+		SELECT a_id from account
+		<trim prefix="WHERE" prefixOverrides="AND |OR">
+			a_role != 1
+			<if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(fullnameOrEmail)">
+                AND (a_fullname like #{fullnameOrEmail} OR a_email like #{fullnameOrEmail})
+            </if>
+			<if test="@com.zhongyi.lotusprize.util.MybatisUtil@isNotNullOrEmpty(roleValue)">
+				AND a_role = #{roleValue}
+			</if>
+		</trim>
+		LIMIT ${limit} OFFSET ${offset} 
+	</select>
+	
+	<resultMap id="expertMap" type="map">
+       <id column="expert_id" property="expertId" />
+       <result column="expert_name" property="expertName" />
+       <result column="organization" property="organization" />
+    </resultMap>
+	
+	<select id="findAllExpert" resultMap="expertMap">
+	   select account.a_id as expert_id,account.a_fullname as expertName,account_profile.ap_organization as organization  from account
+	   left join account_profile on account.a_id=account_profile.ap_account_id
+	   where account.a_role &amp; 2 !=0
+	</select>
+	
+	<select id="findTopicManager" resultMap="expertMap" parameterType="java.lang.Integer">
+	   select account.a_id as expert_id,account.a_fullname as expertName,account_profile.ap_organization as organization from account
+	   left join account_profile on account.a_id=account_profile.ap_account_id
+	   inner join topic on account.a_id=topic.own_account_id
+	   where topic.id=#{topicId}
+	</select>
+	
+	
+    
+</mapper>        

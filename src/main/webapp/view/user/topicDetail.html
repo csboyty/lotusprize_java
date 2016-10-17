@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    #include("/baseUrl.html")
+    <!--<meta charset="utf-8">
+    <base href="http://localhost/lotusprizeWeb2014/">
+    <title>2014第四届“芙蓉杯”国际工业设计创新大赛</title>
+    <link rel="shortcut icon" href="images/app/favicon.png" mce_href="images/app/favicon.png" type="image/x-png">-->
+
+    <link type="text/css" rel="stylesheet" href="css/lib/jquery.toastmessage.css">
+    <link type="text/css" rel="stylesheet" href="css/src/common.css">
+    <link type="text/css" rel="stylesheet" href="css/src/user/topicDetail.css">
+    <script type="text/javascript" src="js/lib/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.toastmessage.js"></script>
+    <script type="text/javascript" src="js/lib/juicer-min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.ellipsis.js"></script>
+    <script type="text/javascript" src="js/src/config.js"></script>
+    <script type="text/javascript" src="js/src/user/topicDetail.js"></script>
+    <script type="text/javascript" src="js/src/baiduAnalytics.js"></script>
+    <script>
+        var href="";
+        var stage="${stage}";
+        var topicId="${topic.id}";
+    </script>
+</head>
+<body class="wpBody">
+
+<script type="text/template" id="awardsWorkTpl">
+    {@each workArray as work}
+    <li class="itemInTopic">
+        <a href="s/user/artifact/show/${work.artifactId}">
+            <img src="${work.profile}" class="thumb">
+            <div class="itemRight">
+                <h3 class="workTitle" title="${work.title}">${work.title}</h3>
+                <p class="awards" title="${work.prize}">${work.prize}</p>
+            </div>
+        </a>
+    </li>
+    {@/each}
+</script>
+
+#parse("/wpHeader.html")
+
+<div class="main">
+
+    <div class="leftAside">
+        <!--<a href="http://www.lotusprize.com/lp/s/topic/view" class="return">返回</a>-->
+        <img class="companyLogo" src="${topic.corpLogo}">
+        <span class="companyName" title="${topic.corpName}">${topic.corpName}</span>
+        <p class="txtGreen reward">
+            #if($topic.reward==0)
+            实习
+            #else
+            &yen;${topic.reward}
+            #end
+        </p>
+        <br>
+
+        <!--#if($topic.addition)
+        <label>奖励方式</label>
+        <p class="addition">${topic.addition}</p>
+        <br>
+        #end-->
+
+        <label class="txtGreen">作品提交形式</label>
+        <p class="addition">1.参赛者需提供宽高比1:1的作品展示图（建议不大于500X500px，2M）1张,用于网络展示。<br>2.提供版面精度为 72dpi A3(1191x842px)画幅的 jpg 或者 png 大小小于2M，用于网站展示，版面数量不超过 3 张。<br>3.参赛选手必须以附件形式提供作品三视图、作品效果图，其中作品三视图需求无背景的 tiff 或 png 格式，横向，精度为 300dpi；作品效果图（有背景和无背景各一张）A3 大小，横向，300dpi。采用 zip 或 rar 格式,大小小于 200M。</p>
+        <br>
+
+
+        #if($topic.attachment)
+        <a class="txtGreen" href="${topic.attachment}" target="_blank"  class="download">附件下载</a>
+        <br><br>
+        #end
+        #if($topic.video)
+        <a class="txtGreen" href="${topic.video}" target="_blank"  class="download">视频</a>
+        <br><br>
+        #end
+
+        #if($stage==2)
+        <a href="s/user/artifact/create?topicId=${topic.id}" class="btn">上传作品</a>
+        #end
+
+        #if($stage>=7&&$topic.artifactPassAmount!=0)
+        <a href="s/topic/artifact?topicId=${topic.id}" class="txtGreen">已投${topic.artifactPassAmount}件作品</a>
+
+        <br>
+        <br>
+        <label class="txtGreen">获奖作品</label>
+        <ul id="awardsList">
+            <!-- <li class="itemInTopic">
+                 <a href="#" >
+                     <img src="images/app/defaultThumb.jpg" class="thumb">
+                     <div class="itemRight">
+                         <h3 class="workTitle">游来游去游来游去游来游去游来游去游来游去游来游去游来游去游来游去游来游去游来游去游来游去</h3>
+                         <p class="awards">金奖</p>
+                     </div>
+                 </a>
+             </li>-->
+        </ul>
+        #end
+
+    </div>
+    <div class="content articleContent">
+
+        <h1 class="txtGreen title">${topic.name}</h1>
+        <p class="txtYellow">
+            #if($topic.category=="1")
+            A1 数字化制造与设计创新
+            #elseif($topic.category=="2")
+            A2 智能产品与服务设计创新
+            #elseif($topic.category=="3")
+            B 社会化服务设计创新
+            #end
+        </p>
+        <!--<p class="description">$lotusprizeTool.htmlLine(${topic.description})</p>-->
+        <p class="description">${topic.description}</p>
+
+        #if($topic.addition)
+        <p class="description"><label class="txtGreen">奖励方式:</label><br>${topic.addition}</p>
+        <br>
+        #end
+
+        #foreach( $topicInt in $topic.topicIntroduces )
+        <div class="descriptionImg">
+            <img src="$topicInt.image">
+            #if($topicInt.text!="")
+            <div class="imgInfo">
+                <p class="imgInfoContent">$topicInt.text</p>
+                <span class="showMore">^</span>
+            </div>
+            #end
+        </div>
+        #end
+
+        <!--<div class="descriptionImg">
+            <img src="images/app/defaultImg.jpg">
+            <div class="imgInfo">
+                <p class="imgInfoContent">djfkajdkf剪短发就困了就付款就阿迪会计法额空间发啊江东父老飞
+                    卡阿克对法拉克就都发到饭局啊辽阔的就发到看
+                    djfkajdkf剪短发就困了就付款就阿迪会计法额空间发啊江东父老飞
+                    卡阿克对法拉克就都发到饭局啊辽阔的就发到看
+                    djfkajdkf剪短发就困了就付款就阿迪会计法额空间发啊江东父老飞
+                    卡阿克对法拉克就都发到饭局啊辽阔的就发到看
+                </p>
+                <span class="showMore">^</span>
+            </div>
+        </div>-->
+
+
+    </div>
+</div>
+
+<!--显示作品-->
+<div class="popWindowContainer hidden" id="popWindowContainer">
+    <div id="popWindow" class="popWindow">
+        <div class="toolbar">
+            <a href="#" id="closePopWindow">关闭</a>
+        </div>
+        <div class="workInfo detailPageInfo" id="workInfo">
+
+        </div>
+    </div>
+</div>
+
+#include("/footer.html")
+</body>
+</html>

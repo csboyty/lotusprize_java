@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    #include("/baseUrl.html")
+    <!--<meta charset="utf-8">
+    <base id="baseUrl" href="http://localhost/lotusprizeWeb2014/">
+    <title>2014第四届“芙蓉杯”国际工业设计创新大赛</title>
+    <link rel="shortcut icon" href="images/app/favicon.png" mce_href="images/app/favicon.png" type="image/x-png">-->
+
+    <link type="text/css" rel="stylesheet" href="css/lib/jquery.toastmessage.css">
+    <!--<link type="text/css" rel="stylesheet" href="css/lib/date_input.css">-->
+    <link type="text/css" rel="stylesheet" href="css/src/common.css">
+    <script type="text/javascript" src="js/lib/jquery-2.0.3.min.js"></script>
+    <!--<script type="text/javascript" src="js/lib/jquery.date_input.js"></script>-->
+    <script type="text/javascript" src="js/lib/jquery.form.js"></script>
+    <script type="text/javascript" src="js/lib/juicer-min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.toastmessage.js"></script>
+    <script type="text/javascript" src="js/src/config.js"></script>
+    <script type="text/javascript" src="js/src/admin/stageMgr.js"></script>
+    <script>
+        var href="s/admin/stageSetting";
+    </script>
+</head>
+<body>
+
+<script type="text/template" id="stageTrTpl">
+    <tr>
+        <td class="stageName">${stageName}</td>
+        <td>${startDate}</td>
+        <td>${endDate}</td>
+        <td>
+            <a href="${stageValue}" class="delete">删除</a>
+        </td>
+    </tr>
+</script>
+
+#parse("/header.html")
+
+<section class="main">
+
+    #include("/admin/adminMenu.html")
+
+    <article class="content">
+        <div class="row">
+            <form action="s/admin/stageSetting/create" method="post" id="stageCreateForm">
+                <label>阶段名</label>
+                <select name="stage" id="stage">
+                    <option value="1">命题发布</option>
+                    <option value="2">征集作品</option>
+                    <option value="3">资格审核</option>
+                    <!--<option value="4">网络公众投票</option>-->
+                    <option value="5">一轮评审设置</option>
+                    <option value="6">“创新设计优秀奖”评审</option>
+                    <option value="7">二轮评审设置</option>
+                    <option value="8">孵化项目评选及工作营</option>
+                    <option value="9">终评</option>
+                </select>
+                <!--<label>开始日期</label>
+                <input name="startDate" id="startDate" required class="txt txtWidthLimit100 dateEl">
+                <label>结束日期</label>
+                <input name="endDate" id="endDate" required class="txt txtWidthLimit100 dateEl">-->
+                <input type="submit" class="btn" value="设为当前阶段">
+            </form>
+        </div>
+
+        <!--<table id="stageTable" class="dataTable">
+            <thead>
+            <tr>
+                <th>阶段</th>
+                <th>开始时间</th>
+                <th>结束时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            #foreach( $stageSetting in $stageSettings)
+            <tr>
+                <td class="stageName">${stageSetting.stage}</td>
+                <td>$lotusprizeTool.dateToYmd(${stageSetting.startDate})</td>
+                <td>$lotusprizeTool.dateToYmd(${stageSetting.endDate})</td>
+                <td>
+                    <a href="${stageSetting.stage}" class="delete">删除</a>
+                </td>
+            </tr>
+            #end
+            </tbody>
+        </table>-->
+
+        <div class="row">
+            <label>当前阶段:</label><label id="currentStage" class="txtGreen">${stage}</label>
+        </div>
+        <table class="dataTable">
+            <thead>
+            <tr>
+                <th>阶段</th>
+                <th>可做操作</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>选题发布</td>
+                    <td>选题的发布、修改、删除</td>
+                </tr>
+                <tr>
+                    <td>作品征集</td>
+                    <td>用户上传作品、修改作品、删除作品</td>
+                </tr>
+                <tr>
+                    <td>资格审查</td>
+                    <td>给作品设置审核状态</td>
+                </tr>
+                <!--<tr>
+                    <td>网络公众投票</td>
+                    <td>用户投票（此阶段已集成到“创新设计优秀奖”评审及其后续阶段）</td>
+                </tr>-->
+                <tr>
+                    <td>一轮评审设置</td>
+                    <td>设置第一轮评审评委，进入一轮评审作品自动分发给设置的评委</td>
+                </tr>
+                <tr>
+                    <td>“创新设计优秀奖”评审</td>
+                    <td>评委打分，给作品添加奖项（创新设计优秀奖）</td>
+                </tr>
+                <tr>
+                    <td>二轮评审设置</td>
+                    <td>设置第二轮评审评委，获得优秀奖作品自动分发给设置的评委</td>
+                </tr>
+                <tr>
+                    <td>孵化项目评选及工作营</td>
+                    <td>评委打分，给作品添加是否孵化状态</td>
+                </tr>
+                <tr>
+                    <td>终评</td>
+                    <td>给作品添加奖项（24个奖项）</td>
+                </tr>
+            </tbody>
+        </table>
+    </article>
+</section>
+#include("/footer.html")
+</body>
+</html>

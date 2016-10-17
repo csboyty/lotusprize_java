@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    #include("/en/baseUrl.html")
+
+    #if($success)
+    <meta http-equiv="refresh" content="5;url=http://192.168.2.167:9911/lotusprize/s/login?_lang=en">
+    #else
+    <meta http-equiv="refresh" content="5;url=http://192.168.2.167:9911/lotusprize/s/account/forgetPassword?_lang=en">
+    #end
+
+    <link href="css/src/common.css" type="text/css" rel="stylesheet">
+
+</head>
+<body class="enBody">
+
+#parse("/en/loginHeader.html")
+
+<div class="content messageContent">
+    #if($success)
+        Password activate success,Jump automatically after 5 seconds
+    <a href="s/login?_lang=en" class="txtGreen">login</a>.
+    #else
+        Mail failed,Password activation failed,Jump automatically after 5 seconds to
+    <a href="s/account/forgetPassword?_lang=en" class="txtGreen">forget password</a>.
+    #end
+</div>
+</body>
+</html>

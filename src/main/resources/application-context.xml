@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+ 	   http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+	<import resource="spring-redis.xml"/>
+	<import resource="spring-db.xml"/>
+	<import resource="spring-shiro.xml"/>
+	<import resource="spring-mail.xml" />
+	<import resource="spring-kaptcha.xml"/>
+
+    <context:component-scan base-package="com.zhongyi.lotusprize.service">
+    		<context:include-filter type="annotation" expression="org.aspectj.lang.annotation.Aspect" />
+    </context:component-scan>
+    
+    <aop:aspectj-autoproxy />
+    
+    <beans profile="deploy-redis">
+    	<bean class="com.zhongyi.lotusprize.service.account.AccountRedisInitializer" />
+    	<bean class="com.zhongyi.lotusprize.service.topic.TopicRedisInitializer" />
+    	<bean class="com.zhongyi.lotusprize.service.artifact.ArtifactRedisInitializer" />
+    </beans>
+
+</beans>       
